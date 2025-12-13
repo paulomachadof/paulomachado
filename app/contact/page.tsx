@@ -1,7 +1,7 @@
 export default function ContactPage() {
   return (
     <section className="max-w-xl">
-      <h1 className="text-2xl font-semibold mb-4">Contact</h1>
+      <h1 className="text-2xl font-semibold mb-4">contact</h1>
 
       <p className="mb-6 text-neutral-600 dark:text-neutral-400">
         Feel free to reach out for product leadership, consulting, or collaboration.
