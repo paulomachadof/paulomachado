@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   description: 'paulo machado',
   openGraph: {
     title: 'paulo machado / product manager',
-    description: 'This is my resume.',
+    description: 'paulo machado',
     url: baseUrl,
     siteName: 'paulo machado / product manager',
     locale: 'en_US',
