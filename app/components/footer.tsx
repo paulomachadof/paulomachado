@@ -1,3 +1,7 @@
+import ArrowIcon from "./ArrowIcon"
+
+// app/components/footer.tsx
+
 export default function Footer() {
   return (
     <>
@@ -41,7 +45,7 @@ export default function Footer() {
         </ul>
       </footer>
 
-      {/* Fixed legal text */}
+      {/* Fixed to the bottom of the viewport */}
       <div className="fixed bottom-0 left-0 right-0 border-t border-neutral-200 bg-white px-4 py-2 text-center text-xs text-neutral-500 dark:border-neutral-800 dark:bg-black dark:text-neutral-400">
         MIT Licensed
       </div>
