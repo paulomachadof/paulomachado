@@ -10,21 +10,21 @@ export default function ContactPage() {
       <ul className="space-y-3">
         <li>
           <a
-            href="mailto:paulomachadof3@gmail.com"
-            className="underline hover:text-neutral-800 dark:hover:text-neutral-200"
-          >
-            email
-          </a>
-        </li>
-
-        <li>
-          <a
             href="https://www.linkedin.com/in/paulomachadof/"
             target="_blank"
             rel="noopener noreferrer"
             className="underline hover:text-neutral-800 dark:hover:text-neutral-200"
           >
-            linkedIn
+            linkedin
+          </a>
+        </li>
+
+        <li>
+          <a
+            href="mailto:paulomachadof3@gmail.com"
+            className="underline hover:text-neutral-800 dark:hover:text-neutral-200"
+          >
+            email
           </a>
         </li>
 
@@ -35,7 +35,7 @@ export default function ContactPage() {
             rel="noopener noreferrer"
             className="underline hover:text-neutral-800 dark:hover:text-neutral-200"
           >
-            schedule a call
+            calendar
           </a>
         </li>
       </ul>
