@@ -1,93 +1,37 @@
-import { notFound } from 'next/navigation'
-import { CustomMDX } from 'app/components/mdx'
+import Link from 'next/link'
 import { formatDate, getProjects } from 'app/projects/utils'
-import { baseUrl } from 'app/sitemap'
 
-export async function generateStaticParams() {
-  const projects = getProjects()
-
-  return projects.map((project) => ({
-    slug: project.slug,
-  }))
-}
-
-export function generateMetadata({ params }) {
-  const project = getProjects().find((project) => project.slug === params.slug)
-  if (!project) return
-
-  const {
-    title,
-    publishedAt: publishedTime,
-    summary: description,
-    image,
-  } = project.metadata
-
-  const ogImage = image
-    ? image
-    : `${baseUrl}/og?title=${encodeURIComponent(title)}`
-
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      type: 'article',
-      publishedTime,
-      url: `${baseUrl}/projects/${project.slug}`,
-      images: [{ url: ogImage }],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description,
-      images: [ogImage],
-    },
-  }
-}
-
-export default function Project({ params }) {
-  const project = getProjects().find((project) => project.slug === params.slug)
-
-  if (!project) {
-    notFound()
-  }
+export function Projects() {
+  const allProjects = getProjects()
 
   return (
-    <section>
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'CreativeWork',
-            headline: project.metadata.title,
-            datePublished: project.metadata.publishedAt,
-            dateModified: project.metadata.publishedAt,
-            description: project.metadata.summary,
-            image: project.metadata.image
-              ? `${baseUrl}${project.metadata.image}`
-              : `/og?title=${encodeURIComponent(project.metadata.title)}`,
-            url: `${baseUrl}/projects/${project.slug}`,
-            author: {
-              '@type': 'Person',
-              name: 'Paulo Machado',
-            },
-          }),
-        }}
-      />
-      <h1 className="title font-semibold text-2xl tracking-tighter">
-        {project.metadata.title}
-      </h1>
-      <div className="flex justify-between items-center mt-2 mb-8 text-sm">
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          {formatDate(project.metadata.publishedAt)}
-        </p>
-      </div>
-      <article className="prose">
-        <CustomMDX source={project.content} />
-      </article>
-    </section>
+    <div>
+      {allProjects
+        .sort((a, b) => {
+          if (
+            new Date(a.metadata.publishedAt) >
+            new Date(b.metadata.publishedAt)
+          ) {
+            return -1
+          }
+          return 1
+        })
+        .map((project) => (
+          <Link
+            key={project.slug}
+            className="flex flex-col space-y-1 mb-4"
+            href={`/projects/${project.slug}`}
+          >
+            <div className="w-full flex flex-col md:flex-row space-x-0 md:space-x-2">
+              <p className="text-neutral-600 dark:text-neutral-400 w-[100px] tabular-nums">
+                {formatDate(project.metadata.publishedAt, false)}
+              </p>
+              <p className="text-neutral-900 dark:text-neutral-100 tracking-tight">
+                {project.metadata.title}
+              </p>
+            </div>
+          </Link>
+        ))}
+    </div>
   )
 }
