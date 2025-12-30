@@ -1,37 +1,56 @@
-import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import { CustomMDX } from 'app/components/mdx'
 import { formatDate, getProjects } from 'app/blog/utils'
+import { baseUrl } from 'app/sitemap'
 
-export function Projects() {
-  const allProjects = getProjects()
+export async function generateStaticParams() {
+  return getProjects().map((project) => ({
+    slug: project.slug,
+  }))
+}
+
+export function generateMetadata({ params }) {
+  const project = getProjects().find((p) => p.slug === params.slug)
+  if (!project) return
+
+  const { title, summary, publishedAt, image } = project.metadata
+
+  const ogImage = image
+    ? image
+    : `${baseUrl}/og?title=${encodeURIComponent(title)}`
+
+  return {
+    title,
+    description: summary,
+    openGraph: {
+      title,
+      description: summary,
+      type: 'article',
+      publishedTime: publishedAt,
+      url: `${baseUrl}/blog/${project.slug}`,
+      images: [{ url: ogImage }],
+    },
+  }
+}
+
+export default function Page({ params }) {
+  const project = getProjects().find((p) => p.slug === params.slug)
+
+  if (!project) notFound()
 
   return (
-    <div>
-      {allProjects
-        .sort((a, b) => {
-          if (
-            new Date(a.metadata.publishedAt) >
-            new Date(b.metadata.publishedAt)
-          ) {
-            return -1
-          }
-          return 1
-        })
-        .map((project) => (
-          <Link
-            key={project.slug}
-            className="flex flex-col space-y-1 mb-4"
-            href={`/projects/${project.slug}`}
-          >
-            <div className="w-full flex flex-col md:flex-row space-x-0 md:space-x-2">
-              <p className="text-neutral-600 dark:text-neutral-400 w-[100px] tabular-nums">
-                {formatDate(project.metadata.publishedAt, false)}
-              </p>
-              <p className="text-neutral-900 dark:text-neutral-100 tracking-tight">
-                {project.metadata.title}
-              </p>
-            </div>
-          </Link>
-        ))}
-    </div>
+    <section>
+      <h1 className="title font-semibold text-2xl tracking-tighter">
+        {project.metadata.title}
+      </h1>
+
+      <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-8">
+        {formatDate(project.metadata.publishedAt)}
+      </p>
+
+      <article className="prose">
+        <CustomMDX source={project.content} />
+      </article>
+    </section>
   )
 }
