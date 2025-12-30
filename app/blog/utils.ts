@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+export const getBlogPosts = getProjects
 
 type Metadata = {
   title: string
