@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { CustomMDX } from 'app/components/mdx'
-import { formatDate, getProjects } from 'app/blog/utils'
+import { formatDate, getProjects } from 'app/projects/utils'
 import { baseUrl } from 'app/sitemap'
 
 export async function generateStaticParams() {
@@ -27,7 +27,7 @@ export function generateMetadata({ params }) {
       description: summary,
       type: 'article',
       publishedTime: publishedAt,
-      url: `${baseUrl}/blog/${project.slug}`,
+      url: `${baseUrl}/projects/${project.slug}`,
       images: [{ url: ogImage }],
     },
   }
