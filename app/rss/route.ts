@@ -1,42 +1,41 @@
 import { baseUrl } from 'app/sitemap'
-import { getBlogPosts } from 'app/blog/utils'
+import { getProjects } from 'app/projects/utils'
 
 export async function GET() {
-  let allBlogs = await getBlogPosts()
+  const allProjects = getProjects()
 
-  const itemsXml = allBlogs
-    .sort((a, b) => {
-      if (new Date(a.metadata.publishedAt) > new Date(b.metadata.publishedAt)) {
-        return -1
-      }
-      return 1
-    })
-    .map(
-      (post) =>
-        `<item>
-          <title>${post.metadata.title}</title>
-          <link>${baseUrl}/blog/${post.slug}</link>
-          <description>${post.metadata.summary || ''}</description>
-          <pubDate>${new Date(
-            post.metadata.publishedAt
-          ).toUTCString()}</pubDate>
-        </item>`
+  const itemsXml = allProjects
+    .sort(
+      (a, b) =>
+        new Date(b.metadata.publishedAt).getTime() -
+        new Date(a.metadata.publishedAt).getTime()
     )
-    .join('\n')
+    .map(
+      (project) => `
+        <item>
+          <title>${project.metadata.title}</title>
+          <link>${baseUrl}/projects/${project.slug}</link>
+          <guid>${baseUrl}/projects/${project.slug}</guid>
+          <pubDate>${new Date(project.metadata.publishedAt).toUTCString()}</pubDate>
+          <description>${project.metadata.summary}</description>
+        </item>
+      `
+    )
+    .join('')
 
-  const rssFeed = `<?xml version="1.0" encoding="UTF-8" ?>
-  <rss version="2.0">
-    <channel>
-        <title>My Resume</title>
-        <link>${baseUrl}</link>
-        <description>This is my resume RSS feed</description>
+  const rssXml = `<?xml version="1.0" encoding="UTF-8" ?>
+    <rss version="2.0">
+      <channel>
+        <title>Projects</title>
+        <link>${baseUrl}/projects</link>
+        <description>My projects.</description>
         ${itemsXml}
-    </channel>
-  </rss>`
+      </channel>
+    </rss>`
 
-  return new Response(rssFeed, {
+  return new Response(rssXml, {
     headers: {
-      'Content-Type': 'text/xml',
+      'Content-Type': 'application/xml',
     },
   })
 }
