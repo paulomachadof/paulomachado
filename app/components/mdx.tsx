@@ -1,35 +1,13 @@
+// app/components/mdx.tsx
 import Link from 'next/link'
 import Image from 'next/image'
+import React from 'react'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import remarkGfm from 'remark-gfm'
 import { highlight } from 'sugar-high'
-import React from 'react'
-
-function Table({ data }: any) {
-  const headers = data.headers.map((header: string, index: number) => (
-    <th key={index}>{header}</th>
-  ))
-
-  const rows = data.rows.map((row: string[], index: number) => (
-    <tr key={index}>
-      {row.map((cell: string, cellIndex: number) => (
-        <td key={cellIndex}>{cell}</td>
-      ))}
-    </tr>
-  ))
-
-  return (
-    <table>
-      <thead>
-        <tr>{headers}</tr>
-      </thead>
-      <tbody>{rows}</tbody>
-    </table>
-  )
-}
 
 function CustomLink(props: any) {
-  const href = props.href
+  const href = props?.href
 
   if (href?.startsWith('/')) {
     return (
@@ -39,12 +17,15 @@ function CustomLink(props: any) {
     )
   }
 
-  if (href?.startsWith('#')) return <a {...props} />
+  if (href?.startsWith('#')) {
+    return <a {...props} />
+  }
 
   return <a target="_blank" rel="noopener noreferrer" {...props} />
 }
 
 function RoundedImage(props: any) {
+  // Next/Image precisa de width/height (ou fill). Assumindo que você já passa isso no MDX.
   return <Image alt={props.alt} className="rounded-lg" {...props} />
 }
 
@@ -85,6 +66,32 @@ function createHeading(level: number) {
   return Heading
 }
 
+// Optional: componente "Table" manual (se você usar <Table data={...}/> em algum MDX)
+function Table({ data }: any) {
+  const headers = data.headers.map((header: string, index: number) => (
+    <th key={index}>{header}</th>
+  ))
+
+  const rows = data.rows.map((row: string[], index: number) => (
+    <tr key={index}>
+      {row.map((cell: string, cellIndex: number) => (
+        <td key={cellIndex}>{cell}</td>
+      ))}
+    </tr>
+  ))
+
+  return (
+    <div className="overflow-x-auto my-8">
+      <table className="w-full border-collapse border border-neutral-200 dark:border-neutral-800 text-sm">
+        <thead className="bg-neutral-50 dark:bg-neutral-900">
+          <tr>{headers}</tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </table>
+    </div>
+  )
+}
+
 const components = {
   h1: createHeading(1),
   h2: createHeading(2),
@@ -92,9 +99,46 @@ const components = {
   h4: createHeading(4),
   h5: createHeading(5),
   h6: createHeading(6),
+
   Image: RoundedImage,
   a: CustomLink,
   code: Code,
+
+  // ✅ Tabelas Markdown (GFM) -> estilos para table/th/td etc.
+  table: (props: React.TableHTMLAttributes<HTMLTableElement>) => (
+    <div className="overflow-x-auto my-8">
+      <table
+        className="w-full border-collapse border border-neutral-200 dark:border-neutral-800 text-sm"
+        {...props}
+      />
+    </div>
+  ),
+  thead: (props: React.HTMLAttributes<HTMLTableSectionElement>) => (
+    <thead className="bg-neutral-50 dark:bg-neutral-900" {...props} />
+  ),
+  tbody: (props: React.HTMLAttributes<HTMLTableSectionElement>) => (
+    <tbody {...props} />
+  ),
+  tr: (props: React.HTMLAttributes<HTMLTableRowElement>) => (
+    <tr
+      className="border-b border-neutral-200 dark:border-neutral-800 last:border-b-0"
+      {...props}
+    />
+  ),
+  th: (props: React.ThHTMLAttributes<HTMLTableCellElement>) => (
+    <th
+      className="px-3 py-2 text-left font-semibold border-r border-neutral-200 dark:border-neutral-800 last:border-r-0 whitespace-nowrap"
+      {...props}
+    />
+  ),
+  td: (props: React.TdHTMLAttributes<HTMLTableCellElement>) => (
+    <td
+      className="px-3 py-2 align-top border-r border-neutral-200 dark:border-neutral-800 last:border-r-0"
+      {...props}
+    />
+  ),
+
+  // mantém disponível caso você use <Table data={...}/>
   Table,
 }
 
