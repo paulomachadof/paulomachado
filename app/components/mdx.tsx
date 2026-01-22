@@ -24,11 +24,6 @@ function CustomLink(props: any) {
   return <a target="_blank" rel="noopener noreferrer" {...props} />
 }
 
-function RoundedImage(props: any) {
-  // Next/Image precisa de width/height (ou fill). Assumindo que você já passa isso no MDX.
-  return <Image alt={props.alt} className="rounded-lg" {...props} />
-}
-
 function Code({ children, ...props }: any) {
   const codeHTML = highlight(children)
   return <code dangerouslySetInnerHTML={{ __html: codeHTML }} {...props} />
@@ -92,6 +87,13 @@ function Table({ data }: any) {
   )
 }
 
+/**
+ * ✅ IMPORTANTE sobre imagens no MDX:
+ * - Markdown ![]() gera <img>, NÃO <Image>.
+ * - Então a forma mais confiável é mapear "img" e servir arquivos via /public.
+ * - Use no MDX caminhos absolutos tipo:
+ *   ![alt](/projects/guided-support/discovery_workflow_en.png)
+ */
 const components = {
   h1: createHeading(1),
   h2: createHeading(2),
@@ -100,11 +102,28 @@ const components = {
   h5: createHeading(5),
   h6: createHeading(6),
 
-  Image: RoundedImage,
   a: CustomLink,
   code: Code,
 
-  // ✅ Tabelas Markdown (GFM) -> estilos para table/th/td etc.
+  // ✅ Markdown images: ![alt](...)
+  img: (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
+    // eslint-disable-next-line @next/next/no-img-element
+    return (
+      <img
+        {...props}
+        alt={props.alt ?? ''}
+        className="rounded-lg max-w-full h-auto my-6"
+      />
+    )
+  },
+
+  // ✅ Se você usar explicitamente <Image ... /> dentro do MDX,
+  // este handler ainda funciona (Next/Image precisa de width/height ou fill).
+  Image: (props: any) => (
+    <Image alt={props.alt ?? ''} className="rounded-lg" {...props} />
+  ),
+
+  // ✅ Tabelas Markdown (GFM)
   table: (props: React.TableHTMLAttributes<HTMLTableElement>) => (
     <div className="overflow-x-auto my-8">
       <table
@@ -138,7 +157,7 @@ const components = {
     />
   ),
 
-  // mantém disponível caso você use <Table data={...}/>
+  // Mantém disponível caso você use <Table data={...}/>
   Table,
 }
 
