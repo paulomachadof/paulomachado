@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { formatDate, getProjects } from 'app/projects/utils'
+pnpm add remark-gfm
 
 export function Projects() {
   const allProjects = getProjects()
