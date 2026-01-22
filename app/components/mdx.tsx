@@ -5,13 +5,14 @@ import remarkGfm from 'remark-gfm'
 import { highlight } from 'sugar-high'
 import React from 'react'
 
-function Table({ data }: { data: { headers: string[]; rows: string[][] } }) {
-  const headers = data.headers.map((header, index) => (
+function Table({ data }: any) {
+  const headers = data.headers.map((header: string, index: number) => (
     <th key={index}>{header}</th>
   ))
-  const rows = data.rows.map((row, index) => (
+
+  const rows = data.rows.map((row: string[], index: number) => (
     <tr key={index}>
-      {row.map((cell, cellIndex) => (
+      {row.map((cell: string, cellIndex: number) => (
         <td key={cellIndex}>{cell}</td>
       ))}
     </tr>
@@ -27,21 +28,18 @@ function Table({ data }: { data: { headers: string[]; rows: string[][] } }) {
   )
 }
 
-function CustomLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
-  const href = props.href || ''
+function CustomLink(props: any) {
+  const href = props.href
 
-  if (href.startsWith('/')) {
-    // Note: next/link expects LinkProps; spreading anchor props is commonly used in MDX setups.
+  if (href?.startsWith('/')) {
     return (
-      <Link href={href} {...(props as any)}>
+      <Link href={href} {...props}>
         {props.children}
       </Link>
     )
   }
 
-  if (href.startsWith('#')) {
-    return <a {...props} />
-  }
+  if (href?.startsWith('#')) return <a {...props} />
 
   return <a target="_blank" rel="noopener noreferrer" {...props} />
 }
@@ -50,17 +48,14 @@ function RoundedImage(props: any) {
   return <Image alt={props.alt} className="rounded-lg" {...props} />
 }
 
-function Code({
-  children,
-  ...props
-}: React.HTMLAttributes<HTMLElement> & { children: string }) {
+function Code({ children, ...props }: any) {
   const codeHTML = highlight(children)
   return <code dangerouslySetInnerHTML={{ __html: codeHTML }} {...props} />
 }
 
 function slugify(str: any) {
   return str
-    ?.toString()
+    .toString()
     .toLowerCase()
     .trim()
     .replace(/\s+/g, '-')
@@ -69,10 +64,9 @@ function slugify(str: any) {
     .replace(/\-\-+/g, '-')
 }
 
-function createHeading(level: 1 | 2 | 3 | 4 | 5 | 6) {
-  const Heading = ({ children }: { children: any }) => {
+function createHeading(level: number) {
+  const Heading = ({ children }: any) => {
     const slug = slugify(children)
-
     return React.createElement(
       `h${level}`,
       { id: slug },
@@ -88,7 +82,6 @@ function createHeading(level: 1 | 2 | 3 | 4 | 5 | 6) {
   }
 
   Heading.displayName = `Heading${level}`
-
   return Heading
 }
 
@@ -99,34 +92,9 @@ const components = {
   h4: createHeading(4),
   h5: createHeading(5),
   h6: createHeading(6),
-
   Image: RoundedImage,
   a: CustomLink,
   code: Code,
-
-  // Render Markdown tables (enabled by remark-gfm) with nicer defaults
-  table: (props: React.TableHTMLAttributes<HTMLTableElement>) => (
-    <div className="overflow-x-auto my-6">
-      <table className="w-full border-collapse" {...props} />
-    </div>
-  ),
-  thead: (props: React.HTMLAttributes<HTMLTableSectionElement>) => (
-    <thead className="border-b" {...props} />
-  ),
-  tbody: (props: React.HTMLAttributes<HTMLTableSectionElement>) => (
-    <tbody {...props} />
-  ),
-  tr: (props: React.HTMLAttributes<HTMLTableRowElement>) => (
-    <tr className="border-b last:border-b-0" {...props} />
-  ),
-  th: (props: React.ThHTMLAttributes<HTMLTableCellElement>) => (
-    <th className="text-left p-2 font-semibold" {...props} />
-  ),
-  td: (props: React.TdHTMLAttributes<HTMLTableCellElement>) => (
-    <td className="p-2 align-top" {...props} />
-  ),
-
-  // Optional custom table component if you want to call <Table data={...} /> in MDX
   Table,
 }
 
