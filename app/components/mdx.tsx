@@ -1,32 +1,128 @@
-// app/components/mdx.tsx
-import Link from 'next/link'
-import Image from 'next/image'
-import React from 'react'
-import { MDXRemote } from 'next-mdx-remote/rsc'
-import remarkGfm from 'remark-gfm'
-import { highlight } from 'sugar-high'
+import Link from "next/link";
+import Image from "next/image";
+import React from "react";
+import { MDXRemote, type MDXRemoteProps } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
+import { highlight } from "sugar-high";
 
-function CustomLink(props: any) {
-  const href = props?.href
+type TableData = {
+  headers: string[];
+  rows: (string | number)[][];
+};
 
-  if (href?.startsWith('/')) {
+function Table({ data }: { data: TableData }) {
+  const headers = data.headers.map((header, index) => (
+    <th key={index} className="border-b px-4 py-2 text-left font-semibold">
+      {header}
+    </th>
+  ));
+
+  const rows = data.rows.map((row, index) => (
+    <tr key={index} className="border-b last:border-b-0">
+      {row.map((cell, cellIndex) => (
+        <td key={cellIndex} className="px-4 py-2 align-top">
+          {cell}
+        </td>
+      ))}
+    </tr>
+  ));
+
+  return (
+    <div className="my-6 w-full overflow-x-auto">
+      <table className="w-full border-collapse text-sm">
+        <thead>
+          <tr>{headers}</tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </table>
+    </div>
+  );
+}
+
+function CustomLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
+  const href = props.href ?? "";
+
+  if (href.startsWith("/")) {
+    // eslint-disable-next-line jsx-a11y/anchor-has-content
     return (
       <Link href={href} {...props}>
         {props.children}
       </Link>
-    )
+    );
   }
 
-  if (href?.startsWith('#')) {
-    return <a {...props} />
+  if (href.startsWith("#")) {
+    return <a {...props} />;
   }
 
-  return <a target="_blank" rel="noopener noreferrer" {...props} />
+  return <a target="_blank" rel="noopener noreferrer" {...props} />;
 }
 
-function Code({ children, ...props }: any) {
-  const codeHTML = highlight(children)
-  return <code dangerouslySetInnerHTML={{ __html: codeHTML }} {...props} />
+/**
+ * IMPORTANT:
+ * Markdown images `![alt](src)` render as `<img ... />`, NOT as `<Image />`.
+ * So we override `img` and render with next/image.
+ *
+ * Also set `unoptimized` to avoid issues if you’re using `output: "export"`
+ * (static export doesn't support Next Image Optimization).
+ */
+function MdxImage(
+  props: React.ImgHTMLAttributes<HTMLImageElement> & {
+    width?: number;
+    height?: number;
+  }
+) {
+  const {
+    src,
+    alt,
+    title,
+    width: w,
+    height: h,
+    ...rest
+  } = props;
+
+  // If MDX gives something unexpected
+  if (!src) return null;
+
+  const width = typeof w === "number" ? w : 1600;
+  const height = typeof h === "number" ? h : 900;
+
+  return (
+    <figure className="my-6">
+      <div className="relative w-full">
+        <Image
+          src={src}
+          alt={alt ?? ""}
+          title={title}
+          width={width}
+          height={height}
+          className="h-auto w-full rounded-lg"
+          // Works on Vercel + avoids breakage in static export mode
+          unoptimized
+          {...(rest as any)}
+        />
+      </div>
+
+      {title ? (
+        <figcaption className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
+          {title}
+        </figcaption>
+      ) : null}
+    </figure>
+  );
+}
+
+function Code({
+  children,
+  ...props
+}: React.HTMLAttributes<HTMLElement> & { children: string }) {
+  const codeHTML = highlight(children);
+  return (
+    <code
+      dangerouslySetInnerHTML={{ __html: codeHTML }}
+      {...props}
+    />
+  );
 }
 
 function slugify(str: any) {
@@ -34,66 +130,34 @@ function slugify(str: any) {
     .toString()
     .toLowerCase()
     .trim()
-    .replace(/\s+/g, '-')
-    .replace(/&/g, '-and-')
-    .replace(/[^\w\-]+/g, '')
-    .replace(/\-\-+/g, '-')
+    .replace(/\s+/g, "-")
+    .replace(/&/g, "-and-")
+    .replace(/[^\w\-]+/g, "")
+    .replace(/\-\-+/g, "-");
 }
 
-function createHeading(level: number) {
-  const Heading = ({ children }: any) => {
-    const slug = slugify(children)
+function createHeading(level: 1 | 2 | 3 | 4 | 5 | 6) {
+  const Heading = ({ children }: { children: React.ReactNode }) => {
+    const slug = slugify(children);
     return React.createElement(
       `h${level}`,
-      { id: slug },
+      { id: slug, className: "scroll-mt-24" },
       [
-        React.createElement('a', {
+        React.createElement("a", {
           href: `#${slug}`,
           key: `link-${slug}`,
-          className: 'anchor',
+          className: "anchor",
+          "aria-label": "Link to section",
         }),
       ],
       children
-    )
-  }
+    );
+  };
 
-  Heading.displayName = `Heading${level}`
-  return Heading
+  Heading.displayName = `Heading${level}`;
+  return Heading;
 }
 
-// Optional: componente "Table" manual (se você usar <Table data={...}/> em algum MDX)
-function Table({ data }: any) {
-  const headers = data.headers.map((header: string, index: number) => (
-    <th key={index}>{header}</th>
-  ))
-
-  const rows = data.rows.map((row: string[], index: number) => (
-    <tr key={index}>
-      {row.map((cell: string, cellIndex: number) => (
-        <td key={cellIndex}>{cell}</td>
-      ))}
-    </tr>
-  ))
-
-  return (
-    <div className="overflow-x-auto my-8">
-      <table className="w-full border-collapse border border-neutral-200 dark:border-neutral-800 text-sm">
-        <thead className="bg-neutral-50 dark:bg-neutral-900">
-          <tr>{headers}</tr>
-        </thead>
-        <tbody>{rows}</tbody>
-      </table>
-    </div>
-  )
-}
-
-/**
- * ✅ IMPORTANTE sobre imagens no MDX:
- * - Markdown ![]() gera <img>, NÃO <Image>.
- * - Então a forma mais confiável é mapear "img" e servir arquivos via /public.
- * - Use no MDX caminhos absolutos tipo:
- *   ![alt](/projects/guided-support/discovery_workflow_en.png)
- */
 const components = {
   h1: createHeading(1),
   h2: createHeading(2),
@@ -102,66 +166,23 @@ const components = {
   h5: createHeading(5),
   h6: createHeading(6),
 
+  // Links + code
   a: CustomLink,
   code: Code,
 
-  // ✅ Markdown images: ![alt](...)
-  img: (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
-    // eslint-disable-next-line @next/next/no-img-element
-    return (
-      <img
-        {...props}
-        alt={props.alt ?? ''}
-        className="rounded-lg max-w-full h-auto my-6"
-      />
-    )
-  },
-
-  // ✅ Se você usar explicitamente <Image ... /> dentro do MDX,
-  // este handler ainda funciona (Next/Image precisa de width/height ou fill).
-  Image: (props: any) => (
-    <Image alt={props.alt ?? ''} className="rounded-lg" {...props} />
-  ),
-
-  // ✅ Tabelas Markdown (GFM)
-  table: (props: React.TableHTMLAttributes<HTMLTableElement>) => (
-    <div className="overflow-x-auto my-8">
-      <table
-        className="w-full border-collapse border border-neutral-200 dark:border-neutral-800 text-sm"
-        {...props}
-      />
-    </div>
-  ),
-  thead: (props: React.HTMLAttributes<HTMLTableSectionElement>) => (
-    <thead className="bg-neutral-50 dark:bg-neutral-900" {...props} />
-  ),
-  tbody: (props: React.HTMLAttributes<HTMLTableSectionElement>) => (
-    <tbody {...props} />
-  ),
-  tr: (props: React.HTMLAttributes<HTMLTableRowElement>) => (
-    <tr
-      className="border-b border-neutral-200 dark:border-neutral-800 last:border-b-0"
-      {...props}
-    />
-  ),
-  th: (props: React.ThHTMLAttributes<HTMLTableCellElement>) => (
-    <th
-      className="px-3 py-2 text-left font-semibold border-r border-neutral-200 dark:border-neutral-800 last:border-r-0 whitespace-nowrap"
-      {...props}
-    />
-  ),
-  td: (props: React.TdHTMLAttributes<HTMLTableCellElement>) => (
-    <td
-      className="px-3 py-2 align-top border-r border-neutral-200 dark:border-neutral-800 last:border-r-0"
-      {...props}
-    />
-  ),
-
-  // Mantém disponível caso você use <Table data={...}/>
+  // Tables (from your custom MDX tables)
   Table,
-}
 
-export function CustomMDX(props: any) {
+  // ✅ Markdown images: ![alt](src)
+  img: MdxImage,
+
+  // Optional: if you ever use <Image .../> inside MDX explicitly:
+  Image: MdxImage,
+};
+
+export function CustomMDX(
+  props: MDXRemoteProps & { components?: Record<string, React.ComponentType<any>> }
+) {
   return (
     <MDXRemote
       {...props}
@@ -172,5 +193,5 @@ export function CustomMDX(props: any) {
       }}
       components={{ ...components, ...(props.components || {}) }}
     />
-  )
+  );
 }
