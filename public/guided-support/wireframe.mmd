@@ -1,0 +1,10 @@
+graph TD
+    subgraph Dashboard_Supervisor
+        Nav[Menu: Dashboard - Perfis - Treinamento - Config]
+        Stats[Métricas: Taxa de Conclusão - Tempo Médio - Satisfação]
+        Main[Visualização de Fluxos IA vs Real]
+        Action[Botão: Ajustar Modelo Manualmente]
+    end
+    Nav --- Stats
+    Stats --- Main
+    Main --- Action

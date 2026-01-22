@@ -1,0 +1,10 @@
+graph TD
+    subgraph Supervisor_Dashboard
+        Nav[Menu: Dashboard - Profiles - Training - Settings]
+        Stats[Metrics: Completion Rate - Avg Time - Satisfaction]
+        Main[AI vs Real Flow Visualization]
+        Action[Button: Manual Model Adjustment]
+    end
+    Nav --- Stats
+    Stats --- Main
+    Main --- Action
