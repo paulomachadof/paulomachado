@@ -145,50 +145,59 @@ input[type='email'] {
 
 /* ===== FIXED TABLE STYLES ===== */
 
-/* Remove the broken global table behavior */
-/* (do NOT force display:block or nowrap globally) */
+/* IMPORTANT:
+   Do NOT apply global "table { display:block; white-space:nowrap }".
+   That breaks table layout. We style only tables inside .prose. */
 
-/* Tables inside prose: proper layout */
+/* Wrapper used in mdx.tsx: <div className="overflow-x-auto my-6"> */
+.prose .overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Keep the table behaving like a real table */
 .prose table {
   width: 100%;
   border-collapse: collapse;
   table-layout: auto;
+  display: table; /* undo any accidental global overrides */
 }
 
-/* Table cells */
+/* Cells */
 .prose th,
 .prose td {
   border: 1px solid rgb(229 231 235); /* neutral-200 */
-  padding: 0.5rem 0.75rem;
+  padding: 0.6rem 0.75rem;
   text-align: left;
   vertical-align: top;
-  white-space: normal;   /* ✅ allows wrapping */
+  white-space: normal; /* allow wrapping */
   word-break: normal;
 }
 
-/* Header row */
+/* Header */
 .prose thead th {
   background-color: rgb(249 250 251); /* neutral-50 */
   font-weight: 600;
 }
 
-.dark .prose thead th {
-  background-color: rgb(17 24 39); /* neutral-900 */
-}
-
-/* Zebra striping */
+/* Zebra */
 .prose tbody tr:nth-child(even) td {
-  background-color: rgb(250 250 250);
+  background-color: rgb(250 250 250); /* neutral-50-ish */
 }
 
-.dark .prose tbody tr:nth-child(even) td {
-  background-color: rgb(15 23 42);
-}
+/* Dark mode (your site uses prefers-color-scheme) */
+@media (prefers-color-scheme: dark) {
+  .prose th,
+  .prose td {
+    border-color: rgb(38 38 38); /* neutral-800/900-ish */
+  }
 
-/* Optional horizontal scroll wrapper (used in mdx.tsx) */
-.prose .table-wrap {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  .prose thead th {
+    background-color: rgb(23 23 23); /* neutral-900 */
+  }
+
+  .prose tbody tr:nth-child(even) td {
+    background-color: rgb(17 17 17); /* neutral-950-ish */
+  }
 }
 
 /* ===== Misc ===== */
