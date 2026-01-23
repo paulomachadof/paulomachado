@@ -118,7 +118,6 @@ html {
 }
 
 .prose > :first-child {
-  /* Override removing top margin, causing layout shift */
   margin-top: 1.25em !important;
   margin-bottom: 1.25em !important;
 }
@@ -130,8 +129,8 @@ pre::-webkit-scrollbar {
 }
 
 pre {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* ===== Form resets ===== */
@@ -143,60 +142,78 @@ input[type='email'] {
   appearance: none;
 }
 
-/* ===== FIXED TABLE STYLES ===== */
+/* ===== TABLE FIX (MDX/Markdown) ===== */
 
 /* IMPORTANT:
-   Do NOT apply global "table { display:block; white-space:nowrap }".
-   That breaks table layout. We style only tables inside .prose. */
+   - Do NOT style table globally
+   - Use a dedicated wrapper class (.table-wrap), not utility names like overflow-x-auto
+*/
 
-/* Wrapper used in mdx.tsx: <div className="overflow-x-auto my-6"> */
-.prose .overflow-x-auto {
+.prose .table-wrap {
+  width: 100%;
+  overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  margin: 1.5rem 0;
 }
 
-/* Keep the table behaving like a real table */
-.prose table {
+/* Force correct table layout (protects against accidental overrides) */
+.prose .table-wrap table {
+  display: table !important;
   width: 100%;
+  min-width: 640px; /* enables horizontal scroll on mobile */
   border-collapse: collapse;
   table-layout: auto;
-  display: table; /* undo any accidental global overrides */
 }
 
-/* Cells */
-.prose th,
-.prose td {
-  border: 1px solid rgb(229 231 235); /* neutral-200 */
+/* Make sure structure stays table-like */
+.prose .table-wrap thead {
+  display: table-header-group !important;
+}
+.prose .table-wrap tbody {
+  display: table-row-group !important;
+}
+.prose .table-wrap tr {
+  display: table-row !important;
+}
+.prose .table-wrap th,
+.prose .table-wrap td {
+  display: table-cell !important;
+}
+
+.prose .table-wrap th,
+.prose .table-wrap td {
+  border: 1px solid rgb(229 231 235);
   padding: 0.6rem 0.75rem;
   text-align: left;
   vertical-align: top;
-  white-space: normal; /* allow wrapping */
+
+  /* ✅ stops the “broken stacked columns” look */
+  white-space: normal !important;
+  overflow-wrap: anywhere;
   word-break: normal;
 }
 
-/* Header */
-.prose thead th {
-  background-color: rgb(249 250 251); /* neutral-50 */
+.prose .table-wrap thead th {
+  background-color: rgb(249 250 251);
   font-weight: 600;
 }
 
-/* Zebra */
-.prose tbody tr:nth-child(even) td {
-  background-color: rgb(250 250 250); /* neutral-50-ish */
+.prose .table-wrap tbody tr:nth-child(even) td {
+  background-color: rgb(250 250 250);
 }
 
-/* Dark mode (your site uses prefers-color-scheme) */
 @media (prefers-color-scheme: dark) {
-  .prose th,
-  .prose td {
-    border-color: rgb(38 38 38); /* neutral-800/900-ish */
+  .prose .table-wrap th,
+  .prose .table-wrap td {
+    border-color: rgb(38 38 38);
   }
 
-  .prose thead th {
-    background-color: rgb(23 23 23); /* neutral-900 */
+  .prose .table-wrap thead th {
+    background-color: rgb(23 23 23);
   }
 
-  .prose tbody tr:nth-child(even) td {
-    background-color: rgb(17 17 17); /* neutral-950-ish */
+  .prose .table-wrap tbody tr:nth-child(even) td {
+    background-color: rgb(17 17 17);
   }
 }
 
