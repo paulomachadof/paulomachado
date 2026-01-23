@@ -6,7 +6,39 @@ import { highlight } from 'sugar-high'
 import React from 'react'
 import remarkGfm from 'remark-gfm'
 
-// ---- Links ----
+// ✅ Table wrapper + styling (scroll only when needed)
+function Table(props: React.TableHTMLAttributes<HTMLTableElement>) {
+  const { className, ...rest } = props
+
+  return (
+    <div className="my-6 w-full overflow-x-auto">
+      <table
+        {...rest}
+        className={[
+          // real table layout (no weird inline/nowrap behavior)
+          'w-full border-collapse text-sm',
+          'table-auto',
+          // borders
+          'border border-neutral-200 dark:border-neutral-800',
+          // header cells
+          '[&_th]:border [&_th]:border-neutral-200 dark:[&_th]:border-neutral-800',
+          '[&_th]:px-3 [&_th]:py-2',
+          '[&_th]:bg-neutral-50 dark:[&_th]:bg-neutral-900/40',
+          '[&_th]:text-left [&_th]:font-medium',
+          // body cells
+          '[&_td]:border [&_td]:border-neutral-200 dark:[&_td]:border-neutral-800',
+          '[&_td]:px-3 [&_td]:py-2',
+          '[&_td]:align-top',
+          // ✅ allow wrapping (prevents the “squeezed together” look)
+          '[&_th]:whitespace-normal [&_td]:whitespace-normal',
+          '[&_td]:break-words',
+          className || '',
+        ].join(' ')}
+      />
+    </div>
+  )
+}
+
 function CustomLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
   const href = props.href || ''
 
@@ -24,17 +56,48 @@ function CustomLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
   return <a target="_blank" rel="noopener noreferrer" {...props} />
 }
 
-// ---- Images ----
 function resolveMdxImageSrc(src?: string) {
   if (!src) return src
-  if (src.startsWith('http://') || src.startsWith('https://') || src.startsWith('/')) {
+  if (
+    src.startsWith('http://') ||
+    src.startsWith('https://') ||
+    src.startsWith('/')
+  ) {
     return src
   }
   return `/${src}`
 }
 
+function RoundedImage(props: any) {
+  const src = resolveMdxImageSrc(props.src)
+
+  // If width/height missing, fall back to plain <img>
+  if (!props.width || !props.height) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return (
+      <img
+        {...props}
+        src={src}
+        alt={props.alt || ''}
+        className={`rounded-lg max-w-full h-auto ${props.className || ''}`}
+        loading={props.loading || 'lazy'}
+      />
+    )
+  }
+
+  return (
+    <Image
+      {...props}
+      src={src}
+      alt={props.alt || ''}
+      className={`rounded-lg max-w-full h-auto ${props.className || ''}`}
+    />
+  )
+}
+
 function HtmlImg(props: React.ImgHTMLAttributes<HTMLImageElement>) {
   const src = resolveMdxImageSrc(props.src || '')
+
   // eslint-disable-next-line @next/next/no-img-element
   return (
     <img
@@ -47,37 +110,11 @@ function HtmlImg(props: React.ImgHTMLAttributes<HTMLImageElement>) {
   )
 }
 
-function RoundedImage(props: any) {
-  const src = resolveMdxImageSrc(props.src)
-  if (!props.width || !props.height) {
-    // eslint-disable-next-line @next/next/no-img-element
-    return (
-      <img
-        {...props}
-        src={src}
-        alt={props.alt || ''}
-        className={`rounded-lg max-w-full h-auto ${props.className || ''}`}
-      />
-    )
-  }
-
-  return (
-    <Image
-      {...props}
-      src={src}
-      alt={props.alt || ''}
-      className={`rounded-lg ${props.className || ''}`}
-    />
-  )
-}
-
-// ---- Code ----
 function Code({ children, ...props }: any) {
   const codeHTML = highlight(children)
   return <code dangerouslySetInnerHTML={{ __html: codeHTML }} {...props} />
 }
 
-// ---- Headings ----
 function slugify(str: any) {
   return str
     .toString()
@@ -95,8 +132,8 @@ function createHeading(level: number) {
       typeof children === 'string'
         ? children
         : Array.isArray(children)
-          ? children.join('')
-          : (children as any)?.toString?.() ?? ''
+        ? children.join('')
+        : (children as any)?.toString?.() ?? ''
 
     const slug = slugify(text)
 
@@ -118,55 +155,6 @@ function createHeading(level: number) {
   return Heading
 }
 
-// ---- Tables (rendered only if remark-gfm is enabled) ----
-function Table(props: React.TableHTMLAttributes<HTMLTableElement>) {
-  const { className, ...rest } = props
-  return (
-    <div className="my-6 w-full overflow-x-auto">
-      <table
-        {...rest}
-        className={[
-          'w-full border-collapse text-sm',
-          'min-w-[720px]',
-          'border border-neutral-200 dark:border-neutral-800',
-          className || '',
-        ].join(' ')}
-      />
-    </div>
-  )
-}
-
-function Th(props: React.ThHTMLAttributes<HTMLTableCellElement>) {
-  const { className, ...rest } = props
-  return (
-    <th
-      {...rest}
-      className={[
-        'border border-neutral-200 dark:border-neutral-800',
-        'bg-neutral-50 dark:bg-neutral-900/40',
-        'px-3 py-2 text-left font-medium',
-        'align-top whitespace-normal',
-        className || '',
-      ].join(' ')}
-    />
-  )
-}
-
-function Td(props: React.TdHTMLAttributes<HTMLTableCellElement>) {
-  const { className, ...rest } = props
-  return (
-    <td
-      {...rest}
-      className={[
-        'border border-neutral-200 dark:border-neutral-800',
-        'px-3 py-2',
-        'align-top whitespace-normal',
-        className || '',
-      ].join(' ')}
-    />
-  )
-}
-
 const components = {
   h1: createHeading(1),
   h2: createHeading(2),
@@ -175,24 +163,24 @@ const components = {
   h5: createHeading(5),
   h6: createHeading(6),
 
-  a: CustomLink,
-  code: Code,
-
+  // ✅ Markdown output tags
   img: HtmlImg,
+  table: Table,
+
+  // ✅ If you use <Image /> directly in MDX
   Image: RoundedImage,
 
-  table: Table,
-  th: Th,
-  td: Td,
+  a: CustomLink,
+  code: Code,
 }
 
 export function CustomMDX(props: any) {
   return (
     <MDXRemote
       {...props}
+      // ✅ This is what makes `| ... |` tables turn into <table>
       options={{
         mdxOptions: {
-          // ✅ This is the missing piece: enables markdown tables, strikethrough, task lists, etc.
           remarkPlugins: [remarkGfm],
         },
       }}
