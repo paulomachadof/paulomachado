@@ -33,6 +33,8 @@ html {
   min-width: 360px;
 }
 
+/* ===== Prose styles ===== */
+
 .prose .anchor {
   @apply absolute invisible no-underline;
 
@@ -121,6 +123,8 @@ html {
   margin-bottom: 1.25em !important;
 }
 
+/* ===== Code block scrollbars ===== */
+
 pre::-webkit-scrollbar {
   display: none;
 }
@@ -130,7 +134,8 @@ pre {
   scrollbar-width: none; /* Firefox */
 }
 
-/* Remove Safari input shadow on mobile */
+/* ===== Form resets ===== */
+
 input[type='text'],
 input[type='email'] {
   -webkit-appearance: none;
@@ -138,12 +143,55 @@ input[type='email'] {
   appearance: none;
 }
 
-table {
-  display: block;
-  max-width: fit-content;
-  overflow-x: auto;
-  white-space: nowrap;
+/* ===== FIXED TABLE STYLES ===== */
+
+/* Remove the broken global table behavior */
+/* (do NOT force display:block or nowrap globally) */
+
+/* Tables inside prose: proper layout */
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
 }
+
+/* Table cells */
+.prose th,
+.prose td {
+  border: 1px solid rgb(229 231 235); /* neutral-200 */
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+  white-space: normal;   /* ✅ allows wrapping */
+  word-break: normal;
+}
+
+/* Header row */
+.prose thead th {
+  background-color: rgb(249 250 251); /* neutral-50 */
+  font-weight: 600;
+}
+
+.dark .prose thead th {
+  background-color: rgb(17 24 39); /* neutral-900 */
+}
+
+/* Zebra striping */
+.prose tbody tr:nth-child(even) td {
+  background-color: rgb(250 250 250);
+}
+
+.dark .prose tbody tr:nth-child(even) td {
+  background-color: rgb(15 23 42);
+}
+
+/* Optional horizontal scroll wrapper (used in mdx.tsx) */
+.prose .table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ===== Misc ===== */
 
 .title {
   text-wrap: balance;
