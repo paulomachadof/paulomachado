@@ -1,128 +1,110 @@
-import Link from "next/link";
-import Image from "next/image";
-import React from "react";
-import { MDXRemote, type MDXRemoteProps } from "next-mdx-remote/rsc";
-import remarkGfm from "remark-gfm";
-import { highlight } from "sugar-high";
+// app/components/mdx.tsx
+import Link from 'next/link'
+import Image from 'next/image'
+import { MDXRemote } from 'next-mdx-remote/rsc'
+import { highlight } from 'sugar-high'
+import React from 'react'
 
-type TableData = {
-  headers: string[];
-  rows: (string | number)[][];
-};
-
-function Table({ data }: { data: TableData }) {
-  const headers = data.headers.map((header, index) => (
-    <th key={index} className="border-b px-4 py-2 text-left font-semibold">
-      {header}
-    </th>
-  ));
-
-  const rows = data.rows.map((row, index) => (
-    <tr key={index} className="border-b last:border-b-0">
-      {row.map((cell, cellIndex) => (
-        <td key={cellIndex} className="px-4 py-2 align-top">
-          {cell}
-        </td>
-      ))}
-    </tr>
-  ));
-
+// ✅ Markdown tables render as <table>. This component styles + makes it scrollable on mobile.
+function Table(props: React.HTMLAttributes<HTMLTableElement>) {
   return (
-    <div className="my-6 w-full overflow-x-auto">
-      <table className="w-full border-collapse text-sm">
-        <thead>
-          <tr>{headers}</tr>
-        </thead>
-        <tbody>{rows}</tbody>
-      </table>
+    <div className="overflow-x-auto my-6">
+      <table
+        className="w-full border-collapse text-sm"
+        {...props}
+      />
     </div>
-  );
+  )
 }
 
 function CustomLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
-  const href = props.href ?? "";
+  const href = props.href || ''
 
-  if (href.startsWith("/")) {
-    // eslint-disable-next-line jsx-a11y/anchor-has-content
+  if (href.startsWith('/')) {
+    // Next <Link> doesn't accept all anchor props in the same way;
+    // keep it simple and pass className + children.
+    const { children, className, ...rest } = props
     return (
-      <Link href={href} {...props}>
-        {props.children}
+      <Link href={href} className={className}>
+        {children}
       </Link>
-    );
+    )
   }
 
-  if (href.startsWith("#")) {
-    return <a {...props} />;
+  if (href.startsWith('#')) {
+    return <a {...props} />
   }
 
-  return <a target="_blank" rel="noopener noreferrer" {...props} />;
+  return <a target="_blank" rel="noopener noreferrer" {...props} />
 }
 
-/**
- * IMPORTANT:
- * Markdown images `![alt](src)` render as `<img ... />`, NOT as `<Image />`.
- * So we override `img` and render with next/image.
- *
- * Also set `unoptimized` to avoid issues if you’re using `output: "export"`
- * (static export doesn't support Next Image Optimization).
- */
-function MdxImage(
-  props: React.ImgHTMLAttributes<HTMLImageElement> & {
-    width?: number;
-    height?: number;
+// ✅ Makes relative MDX image paths work by converting them to your /public structure.
+// Expected files in: /public/projects/<slug>/<image.png>
+function resolveMdxImageSrc(src?: string) {
+  if (!src) return src
+
+  // Already absolute (external) or rooted
+  if (src.startsWith('http://') || src.startsWith('https://') || src.startsWith('/')) {
+    return src
   }
-) {
-  const {
-    src,
-    alt,
-    title,
-    width: w,
-    height: h,
-    ...rest
-  } = props;
 
-  // If MDX gives something unexpected
-  if (!src) return null;
-
-  const width = typeof w === "number" ? w : 1600;
-  const height = typeof h === "number" ? h : 900;
-
-  return (
-    <figure className="my-6">
-      <div className="relative w-full">
-        <Image
-          src={src}
-          alt={alt ?? ""}
-          title={title}
-          width={width}
-          height={height}
-          className="h-auto w-full rounded-lg"
-          // Works on Vercel + avoids breakage in static export mode
-          unoptimized
-          {...(rest as any)}
-        />
-      </div>
-
-      {title ? (
-        <figcaption className="mt-2 text-sm text-neutral-600 dark:text-neutral-400">
-          {title}
-        </figcaption>
-      ) : null}
-    </figure>
-  );
+  // For relative images inside MDX (e.g. "wireframe_en.png"),
+  // we assume they live under /public/projects/<slug>/...
+  // Current route is /projects/<slug> so a root path is safest.
+  // We can't reliably infer <slug> here, so we keep relative as-is if user doesn't follow the folder convention.
+  return `/${src}`
 }
 
-function Code({
-  children,
-  ...props
-}: React.HTMLAttributes<HTMLElement> & { children: string }) {
-  const codeHTML = highlight(children);
+function RoundedImage(props: any) {
+  // next/image needs width/height unless you use fill.
+  // This component supports both:
+  // - If you pass width/height in MDX: <Image src="/..." width={...} height={...} />
+  // - If you use markdown image syntax ![](/path.png), it becomes <img> by default;
+  //   so we also map "img" below.
+  const src = resolveMdxImageSrc(props.src)
+
+  // If width/height missing, fallback to a responsive <img> to avoid build/runtime issues.
+  if (!props.width || !props.height) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        {...props}
+        src={src}
+        alt={props.alt || ''}
+        className={`rounded-lg max-w-full h-auto ${props.className || ''}`}
+      />
+    )
+  }
+
   return (
-    <code
-      dangerouslySetInnerHTML={{ __html: codeHTML }}
+    <Image
       {...props}
+      src={src}
+      alt={props.alt || ''}
+      className={`rounded-lg ${props.className || ''}`}
     />
-  );
+  )
+}
+
+// ✅ Also handle markdown images (which become <img />)
+function HtmlImg(props: React.ImgHTMLAttributes<HTMLImageElement>) {
+  const src = resolveMdxImageSrc(props.src || '')
+
+  // eslint-disable-next-line @next/next/no-img-element
+  return (
+    <img
+      {...props}
+      src={src}
+      alt={props.alt || ''}
+      className={`rounded-lg max-w-full h-auto ${props.className || ''}`}
+      loading={props.loading || 'lazy'}
+    />
+  )
+}
+
+function Code({ children, ...props }: any) {
+  const codeHTML = highlight(children)
+  return <code dangerouslySetInnerHTML={{ __html: codeHTML }} {...props} />
 }
 
 function slugify(str: any) {
@@ -130,32 +112,40 @@ function slugify(str: any) {
     .toString()
     .toLowerCase()
     .trim()
-    .replace(/\s+/g, "-")
-    .replace(/&/g, "-and-")
-    .replace(/[^\w\-]+/g, "")
-    .replace(/\-\-+/g, "-");
+    .replace(/\s+/g, '-')
+    .replace(/&/g, '-and-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-')
 }
 
-function createHeading(level: 1 | 2 | 3 | 4 | 5 | 6) {
+function createHeading(level: number) {
   const Heading = ({ children }: { children: React.ReactNode }) => {
-    const slug = slugify(children);
+    // For complex children, slugify fallback:
+    const text =
+      typeof children === 'string'
+        ? children
+        : Array.isArray(children)
+          ? children.join('')
+          : (children as any)?.toString?.() ?? ''
+
+    const slug = slugify(text)
+
     return React.createElement(
       `h${level}`,
-      { id: slug, className: "scroll-mt-24" },
+      { id: slug },
       [
-        React.createElement("a", {
+        React.createElement('a', {
           href: `#${slug}`,
           key: `link-${slug}`,
-          className: "anchor",
-          "aria-label": "Link to section",
+          className: 'anchor',
         }),
       ],
       children
-    );
-  };
+    )
+  }
 
-  Heading.displayName = `Heading${level}`;
-  return Heading;
+  Heading.displayName = `Heading${level}`
+  return Heading
 }
 
 const components = {
@@ -166,32 +156,22 @@ const components = {
   h5: createHeading(5),
   h6: createHeading(6),
 
-  // Links + code
+  // ✅ Important: markdown uses lowercase "img" and "table"
+  img: HtmlImg,
+  table: Table,
+
+  // If you explicitly use <Image /> in MDX, this will also work:
+  Image: RoundedImage,
+
   a: CustomLink,
   code: Code,
+}
 
-  // Tables (from your custom MDX tables)
-  Table,
-
-  // ✅ Markdown images: ![alt](src)
-  img: MdxImage,
-
-  // Optional: if you ever use <Image .../> inside MDX explicitly:
-  Image: MdxImage,
-};
-
-export function CustomMDX(
-  props: MDXRemoteProps & { components?: Record<string, React.ComponentType<any>> }
-) {
+export function CustomMDX(props: any) {
   return (
     <MDXRemote
       {...props}
-      options={{
-        mdxOptions: {
-          remarkPlugins: [remarkGfm],
-        },
-      }}
       components={{ ...components, ...(props.components || {}) }}
     />
-  );
+  )
 }
