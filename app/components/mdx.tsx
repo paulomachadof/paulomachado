@@ -5,83 +5,6 @@ import { MDXRemote } from 'next-mdx-remote/rsc'
 import { highlight } from 'sugar-high'
 import React from 'react'
 
-type CustomMDXProps = {
-  source: string
-  components?: Record<string, any>
-  /**
-   * Base path for relative assets used inside MDX.
-   * Example: "/projects/guided-support"
-   *
-   * If MDX contains: ![](wireframe.png)
-   * It will become:  /projects/guided-support/wireframe.png
-   */
-  assetBase?: string
-}
-
-function joinUrl(base: string, src: string) {
-  const b = base.endsWith('/') ? base.slice(0, -1) : base
-  const s = src.startsWith('/') ? src.slice(1) : src
-  return `${b}/${s}`
-}
-
-function resolveMdxImageSrc(src?: string, assetBase?: string) {
-  if (!src) return src
-
-  // External or already rooted
-  if (
-    src.startsWith('http://') ||
-    src.startsWith('https://') ||
-    src.startsWith('/')
-  ) {
-    return src
-  }
-
-  // Relative -> prefix with assetBase if provided
-  if (assetBase) return joinUrl(assetBase, src)
-
-  // Fallback: root (may 404 if you don't keep images in /public root)
-  return `/${src}`
-}
-
-// ✅ Markdown tables render as <table>. We'll wrap with a scroll container + basic styling.
-function Table(props: React.TableHTMLAttributes<HTMLTableElement>) {
-  const { className, ...rest } = props
-
-  return (
-    <div className="my-6 w-full overflow-x-auto">
-      <table
-        {...rest}
-        className={[
-          // ✅ garante que continua sendo uma tabela “de verdade”
-          'table w-max min-w-full border-collapse text-sm',
-          'table-auto',
-
-          // ✅ bordas
-          'border border-neutral-200 dark:border-neutral-800',
-          '[&_th]:border [&_th]:border-neutral-200 dark:[&_th]:border-neutral-800',
-          '[&_td]:border [&_td]:border-neutral-200 dark:[&_td]:border-neutral-800',
-
-          // ✅ espaçamento
-          '[&_th]:px-3 [&_th]:py-2',
-          '[&_td]:px-3 [&_td]:py-2',
-
-          // ✅ header
-          '[&_th]:bg-neutral-50 dark:[&_th]:bg-neutral-900/40',
-          '[&_th]:text-left [&_th]:font-medium',
-
-          // ✅ conteúdo
-          '[&_td]:align-top',
-          // IMPORTANT: permitir quebra de linha dentro das células
-          '[&_td]:whitespace-normal [&_th]:whitespace-nowrap',
-          '[&_td]:break-words',
-
-          className || '',
-        ].join(' ')}
-      />
-    </div>
-  )
-}
-
 function CustomLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
   const href = props.href || ''
 
@@ -94,50 +17,22 @@ function CustomLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
     )
   }
 
-  if (href.startsWith('#')) {
-    return <a {...props} />
-  }
+  if (href.startsWith('#')) return <a {...props} />
 
   return <a target="_blank" rel="noopener noreferrer" {...props} />
 }
 
-// ✅ Works for explicit <Image /> usage in MDX
-function RoundedImage(
-  props: any & { assetBase?: string } // internal prop, we inject below
-) {
-  const src = resolveMdxImageSrc(props.src, props.assetBase)
-
-  // If width/height missing, fallback to <img> to avoid Next/Image errors
-  if (!props.width || !props.height) {
-    // eslint-disable-next-line @next/next/no-img-element
-    return (
-      <img
-        {...props}
-        src={src}
-        alt={props.alt || ''}
-        className={`rounded-lg max-w-full h-auto ${props.className || ''}`}
-        loading={props.loading || 'lazy'}
-      />
-    )
+// ---- Images ----
+function resolveMdxImageSrc(src?: string) {
+  if (!src) return src
+  if (src.startsWith('http://') || src.startsWith('https://') || src.startsWith('/')) {
+    return src
   }
-
-  return (
-    <Image
-      {...props}
-      src={src}
-      alt={props.alt || ''}
-      className={`rounded-lg max-w-full h-auto ${props.className || ''}`}
-      sizes={props.sizes || '(max-width: 768px) 100vw, 700px'}
-    />
-  )
+  return `/${src}`
 }
 
-// ✅ Markdown images become lowercase <img />
-function HtmlImg(
-  props: React.ImgHTMLAttributes<HTMLImageElement> & { assetBase?: string }
-) {
-  const src = resolveMdxImageSrc(props.src || '', props.assetBase)
-
+function HtmlImg(props: React.ImgHTMLAttributes<HTMLImageElement>) {
+  const src = resolveMdxImageSrc(props.src || '')
   // eslint-disable-next-line @next/next/no-img-element
   return (
     <img
@@ -150,11 +45,37 @@ function HtmlImg(
   )
 }
 
+function RoundedImage(props: any) {
+  const src = resolveMdxImageSrc(props.src)
+  if (!props.width || !props.height) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return (
+      <img
+        {...props}
+        src={src}
+        alt={props.alt || ''}
+        className={`rounded-lg max-w-full h-auto ${props.className || ''}`}
+      />
+    )
+  }
+
+  return (
+    <Image
+      {...props}
+      src={src}
+      alt={props.alt || ''}
+      className={`rounded-lg ${props.className || ''}`}
+    />
+  )
+}
+
+// ---- Code ----
 function Code({ children, ...props }: any) {
   const codeHTML = highlight(children)
   return <code dangerouslySetInnerHTML={{ __html: codeHTML }} {...props} />
 }
 
+// ---- Headings ----
 function slugify(str: any) {
   return str
     .toString()
@@ -172,8 +93,8 @@ function createHeading(level: number) {
       typeof children === 'string'
         ? children
         : Array.isArray(children)
-        ? children.join('')
-        : (children as any)?.toString?.() ?? ''
+          ? children.join('')
+          : (children as any)?.toString?.() ?? ''
 
     const slug = slugify(text)
 
@@ -195,35 +116,81 @@ function createHeading(level: number) {
   return Heading
 }
 
-export function CustomMDX({
-  source,
-  components: userComponents,
-  assetBase,
-}: CustomMDXProps) {
-  // Inject assetBase into img/Image handlers
-  const ImgWithBase = (p: any) => <HtmlImg {...p} assetBase={assetBase} />
-  const ImageWithBase = (p: any) => <RoundedImage {...p} assetBase={assetBase} />
+// ---- TABLE FIX (robust) ----
+// We style table + th/td directly, so it works even if CSS misses.
+function Table(props: React.TableHTMLAttributes<HTMLTableElement>) {
+  const { className, ...rest } = props
+  return (
+    <div className="my-6 w-full overflow-x-auto">
+      <table
+        {...rest}
+        className={[
+          'w-full border-collapse text-sm',
+          'min-w-[720px]', // ensures columns have room; wrapper will scroll on mobile
+          'border border-neutral-200 dark:border-neutral-800',
+          className || '',
+        ].join(' ')}
+      />
+    </div>
+  )
+}
 
-  const components = {
-    h1: createHeading(1),
-    h2: createHeading(2),
-    h3: createHeading(3),
-    h4: createHeading(4),
-    h5: createHeading(5),
-    h6: createHeading(6),
+function Th(props: React.ThHTMLAttributes<HTMLTableCellElement>) {
+  const { className, ...rest } = props
+  return (
+    <th
+      {...rest}
+      className={[
+        'border border-neutral-200 dark:border-neutral-800',
+        'bg-neutral-50 dark:bg-neutral-900/40',
+        'px-3 py-2 text-left font-medium',
+        'align-top whitespace-normal',
+        className || '',
+      ].join(' ')}
+    />
+  )
+}
 
-    // markdown tags
-    img: ImgWithBase,
-    table: Table,
+function Td(props: React.TdHTMLAttributes<HTMLTableCellElement>) {
+  const { className, ...rest } = props
+  return (
+    <td
+      {...rest}
+      className={[
+        'border border-neutral-200 dark:border-neutral-800',
+        'px-3 py-2',
+        'align-top whitespace-normal',
+        className || '',
+      ].join(' ')}
+    />
+  )
+}
 
-    // explicit MDX component <Image />
-    Image: ImageWithBase,
+const components = {
+  h1: createHeading(1),
+  h2: createHeading(2),
+  h3: createHeading(3),
+  h4: createHeading(4),
+  h5: createHeading(5),
+  h6: createHeading(6),
 
-    a: CustomLink,
-    code: Code,
+  a: CustomLink,
+  code: Code,
 
-    ...(userComponents || {}),
-  }
+  img: HtmlImg,
+  Image: RoundedImage,
 
-  return <MDXRemote source={source} components={components} />
+  // ✅ table fix
+  table: Table,
+  th: Th,
+  td: Td,
+}
+
+export function CustomMDX(props: any) {
+  return (
+    <MDXRemote
+      {...props}
+      components={{ ...components, ...(props.components || {}) }}
+    />
+  )
 }
