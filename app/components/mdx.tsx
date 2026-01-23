@@ -45,22 +45,37 @@ function resolveMdxImageSrc(src?: string, assetBase?: string) {
 
 // ✅ Markdown tables render as <table>. We'll wrap with a scroll container + basic styling.
 function Table(props: React.TableHTMLAttributes<HTMLTableElement>) {
+  const { className, ...rest } = props
+
   return (
     <div className="my-6 w-full overflow-x-auto">
       <table
-        {...props}
+        {...rest}
         className={[
-          'w-full border-collapse text-sm',
-          'min-w-[640px]',
+          // ✅ garante que continua sendo uma tabela “de verdade”
+          'table w-max min-w-full border-collapse text-sm',
+          'table-auto',
+
+          // ✅ bordas
           'border border-neutral-200 dark:border-neutral-800',
           '[&_th]:border [&_th]:border-neutral-200 dark:[&_th]:border-neutral-800',
           '[&_td]:border [&_td]:border-neutral-200 dark:[&_td]:border-neutral-800',
+
+          // ✅ espaçamento
           '[&_th]:px-3 [&_th]:py-2',
           '[&_td]:px-3 [&_td]:py-2',
+
+          // ✅ header
           '[&_th]:bg-neutral-50 dark:[&_th]:bg-neutral-900/40',
-          '[&_th]:text-left',
+          '[&_th]:text-left [&_th]:font-medium',
+
+          // ✅ conteúdo
           '[&_td]:align-top',
-          props.className || '',
+          // IMPORTANT: permitir quebra de linha dentro das células
+          '[&_td]:whitespace-normal [&_th]:whitespace-nowrap',
+          '[&_td]:break-words',
+
+          className || '',
         ].join(' ')}
       />
     </div>
