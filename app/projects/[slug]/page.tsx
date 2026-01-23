@@ -1,3 +1,4 @@
+// app/projects/[slug]/page.tsx
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { CustomMDX } from 'app/components/mdx'
@@ -14,14 +15,12 @@ export function generateMetadata({
   params,
 }: {
   params: { slug: string }
-}): Metadata {
+}): Metadata | undefined {
   const project = getProjects().find((p) => p.slug === params.slug)
-  if (!project) return {}
+  if (!project) return
 
   const { title, summary, publishedAt, image } = project.metadata
 
-  // Se você passar "image" no frontmatter como "/projects/<slug>/<file>.png"
-  // isso vira OG image direto.
   const ogImage = image ? image : `${baseUrl}/og?title=${encodeURIComponent(title)}`
 
   return {
@@ -53,24 +52,11 @@ export default function Page({ params }: { params: { slug: string } }) {
         {formatDate(project.metadata.publishedAt)}
       </p>
 
-      {/* 
-        Dicas importantes:
-        - "prose" controla tipografia
-        - "max-w-none" evita limitar largura (ajuda tabelas)
-        - classes de table aqui garantem layout mesmo se global.css não pegar
-      */}
-      <article
-        className={[
-          'prose dark:prose-invert',
-          'max-w-none',
-          'prose-img:my-6',
-          'prose-table:my-6',
-          'prose-table:block prose-table:overflow-x-auto prose-table:whitespace-nowrap',
-          'prose-th:text-left',
-          'prose-td:align-top',
-        ].join(' ')}
-      >
-        <CustomMDX source={project.content} />
+      <article className="prose">
+        <CustomMDX
+          source={project.content}
+          assetBase={`/projects/${project.slug}`}
+        />
       </article>
     </section>
   )
