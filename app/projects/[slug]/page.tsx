@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
 import { CustomMDX } from 'app/components/mdx'
 import { formatDate, getProjects } from 'app/projects/utils'
 import { baseUrl } from 'app/sitemap'
@@ -9,15 +10,19 @@ export async function generateStaticParams() {
   }))
 }
 
-export function generateMetadata({ params }) {
+export function generateMetadata({
+  params,
+}: {
+  params: { slug: string }
+}): Metadata {
   const project = getProjects().find((p) => p.slug === params.slug)
-  if (!project) return
+  if (!project) return {}
 
   const { title, summary, publishedAt, image } = project.metadata
 
-  const ogImage = image
-    ? image
-    : `${baseUrl}/og?title=${encodeURIComponent(title)}`
+  // Se você passar "image" no frontmatter como "/projects/<slug>/<file>.png"
+  // isso vira OG image direto.
+  const ogImage = image ? image : `${baseUrl}/og?title=${encodeURIComponent(title)}`
 
   return {
     title,
@@ -33,7 +38,7 @@ export function generateMetadata({ params }) {
   }
 }
 
-export default function Page({ params }) {
+export default function Page({ params }: { params: { slug: string } }) {
   const project = getProjects().find((p) => p.slug === params.slug)
 
   if (!project) notFound()
@@ -48,7 +53,23 @@ export default function Page({ params }) {
         {formatDate(project.metadata.publishedAt)}
       </p>
 
-      <article className="prose">
+      {/* 
+        Dicas importantes:
+        - "prose" controla tipografia
+        - "max-w-none" evita limitar largura (ajuda tabelas)
+        - classes de table aqui garantem layout mesmo se global.css não pegar
+      */}
+      <article
+        className={[
+          'prose dark:prose-invert',
+          'max-w-none',
+          'prose-img:my-6',
+          'prose-table:my-6',
+          'prose-table:block prose-table:overflow-x-auto prose-table:whitespace-nowrap',
+          'prose-th:text-left',
+          'prose-td:align-top',
+        ].join(' ')}
+      >
         <CustomMDX source={project.content} />
       </article>
     </section>
