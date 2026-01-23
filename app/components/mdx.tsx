@@ -4,7 +4,9 @@ import Image from 'next/image'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import { highlight } from 'sugar-high'
 import React from 'react'
+import remarkGfm from 'remark-gfm'
 
+// ---- Links ----
 function CustomLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
   const href = props.href || ''
 
@@ -116,8 +118,7 @@ function createHeading(level: number) {
   return Heading
 }
 
-// ---- TABLE FIX (robust) ----
-// We style table + th/td directly, so it works even if CSS misses.
+// ---- Tables (rendered only if remark-gfm is enabled) ----
 function Table(props: React.TableHTMLAttributes<HTMLTableElement>) {
   const { className, ...rest } = props
   return (
@@ -126,7 +127,7 @@ function Table(props: React.TableHTMLAttributes<HTMLTableElement>) {
         {...rest}
         className={[
           'w-full border-collapse text-sm',
-          'min-w-[720px]', // ensures columns have room; wrapper will scroll on mobile
+          'min-w-[720px]',
           'border border-neutral-200 dark:border-neutral-800',
           className || '',
         ].join(' ')}
@@ -180,7 +181,6 @@ const components = {
   img: HtmlImg,
   Image: RoundedImage,
 
-  // ✅ table fix
   table: Table,
   th: Th,
   td: Td,
@@ -190,6 +190,12 @@ export function CustomMDX(props: any) {
   return (
     <MDXRemote
       {...props}
+      options={{
+        mdxOptions: {
+          // ✅ This is the missing piece: enables markdown tables, strikethrough, task lists, etc.
+          remarkPlugins: [remarkGfm],
+        },
+      }}
       components={{ ...components, ...(props.components || {}) }}
     />
   )
