@@ -107,7 +107,7 @@ const education: Education[] = [
     program: 'Master of Science, Computer Science and Software Engineering',
     school: 'Universidade Estadual do Ceará',
     location: 'Fortaleza',
-    year: '2024 – 2025 (Expected)',
+    year: '2024 – 2026 (Expected)',
   },
   {
     program: 'MBA, Business Intelligence and Big Data',
@@ -119,7 +119,7 @@ const education: Education[] = [
     program: 'MBA, Project Management',
     school: 'Universidade Estadual do Ceará',
     location: 'Fortaleza',
-    year: '2026',
+    year: '2024 – 2026',
   },
   {
     program: "Bachelor's Degree, Computer Engineering",
@@ -138,10 +138,12 @@ const skills: SkillGroup[] = [
       'Big Data',
       'SQL',
       'PostgreSQL',
+      'PL/SQL',
+      'PowerBI',
       'Oracle DB',
       'SQL Server',
+      'Python',
       'Shell Script',
-      'PL/SQL',
       'JavaScript',
     ],
   },
@@ -197,7 +199,7 @@ const achievements: Achievement[] = [
 ]
 
 const careerPreferences: CareerPreferences = {
-  compensation: 'Seeking a total compensation package with a floor of $54,000/year. Open to equity or performance bonuses.',
+  compensation: 'Seeking a total compensation package with a floor of $55,000/year. Open to equity or performance bonuses.',
   location: 'Strictly seeking remote-only positions. Currently based in Brazil.',
   companyCulture:
     'Interested in innovative, respectful, and diverse environments that prioritize knowledge sharing and work-life balance. Values organizations using modern technology and AI to solve real-world problems.',
