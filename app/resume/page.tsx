@@ -38,7 +38,7 @@ type CareerPreferences = {
 }
 
 const professionalSummary: ProfessionalSummary = {
-  text: 'A highly analytical Product Manager and Functional Architect with over seven years of experience bridging the gap between complex business requirements and technical execution. Proven track record of optimizing user experiences, including a 44% reduction in account creation time, and fostering product-driven cultures within multinational technology environments. Combines deep engineering expertise with data-driven product discovery to deliver scalable and innovative software solutions.',
+  text: 'A highly analytical Product & Project Manager with over 7 years of experience bridging the gap between complex business requirements and technical execution. Proven track record of optimizing user experiences, including a 44% reduction in account creation time, and fostering product-driven cultures within multinational technology environments. Combines deep engineering expertise with data-driven product discovery to deliver scalable and innovative software solutions.',
 }
 
 const experience: Experience[] = [
