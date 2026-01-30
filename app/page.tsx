@@ -29,8 +29,7 @@ export default function Page() {
 
           <p>
             With over seven years of experience, I deeply understand users'
-            pain points and deliver solutions that consistently exceed
-            expectations.
+            pain points and deliver solutions that solves real world problems.
           </p>
         </div>
       </div>
