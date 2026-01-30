@@ -3,33 +3,43 @@ export default function Page() {
     <section className="flex justify-center px-6">
       <div className="w-full max-w-4xl">
         <h1 className="mb-8 text-3xl font-semibold tracking-tighter">
-          Hi, I'm Paulo!
+          Why I’m a Product Manager
         </h1>
 
         <div className="space-y-6 text-base leading-relaxed text-neutral-700 dark:text-neutral-300">
           <p>
-            I am passionate about creating innovative solutions that improve
-            people's lives, streamline processes, and enhance daily tasks.
-            Since 2017, I have focused on agile digital product development,
-            constantly seeking new insights and knowledge.
+            I am a Product Manager driven by the challenge of transforming
+            complex problems into simple, valuable user experiences. Since 2017,
+            I have worked at the intersection of technology, business, and user
+            needs, building digital products across B2B and B2C environments.
           </p>
 
-          <p>
-            I specialize in aligning complex technical solutions with strategic business goals. Throughout my career at global leaders like Oracle and Dell, 
-            I have consistently driven product optimization and led cross-functional teams to deliver high-impact results in dynamic environments
-          </p>
+          <ul className="list-disc space-y-3 pl-5">
+            <li>
+              Led product development initiatives in globally distributed teams,
+              collaborating across engineering, design, data, and business
+              stakeholders.
+            </li>
+            <li>
+              Defined product strategy and roadmaps grounded in user research,
+              data analysis, and measurable business outcomes.
+            </li>
+            <li>
+              Drove user-centric decision-making, balancing customer value,
+              technical constraints, and organizational goals.
+            </li>
+            <li>
+              Leveraged analytics and experimentation to validate assumptions
+              and continuously improve product performance.
+            </li>
+          </ul>
 
           <p>
-            My drive stems from a commitment to innovation, user-centric
-            design, and data-driven decision-making. I focus on accessibility
-            and solving real-world challenges through impactful products.
-            I excel at developing strategies, crafting compelling narratives,
-            and executing them effectively.
-          </p>
-
-          <p>
-            With over seven years of experience, I deeply understand users'
-            pain points and deliver solutions that solves real world problems.
+            I am particularly motivated by building accessible, scalable
+            solutions and turning insights into clear narratives that align
+            teams and accelerate execution. With over seven years of experience,
+            I consistently deliver products that address real user pain points
+            and create measurable impact.
           </p>
         </div>
       </div>
