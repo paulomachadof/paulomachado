@@ -1,64 +1,39 @@
 export default function Page() {
   return (
     <section className="flex justify-center px-6">
-      <div className="w-full max-w-3xl text-center">
+      <div className="w-full max-w-4xl">
         <h1 className="mb-8 text-3xl font-semibold tracking-tighter">
-          Hi, I'm Paulo!
+          Why I’m a Product Manager?
         </h1>
 
-        <div className="space-y-4 text-base leading-relaxed text-neutral-700 dark:text-neutral-300">
+        <div className="space-y-6 text-base leading-relaxed text-neutral-700 dark:text-neutral-300">
           <p>
-            I am a Product Manager with over 7 years of experience in product
-            strategy and development across B2B and B2C sectors.
+            I am passionate about creating innovative solutions that improve
+            people's lives, streamline processes, and enhance daily tasks.
+            Since 2017, I have focused on digital product development,
+            constantly seeking new insights and knowledge.
           </p>
 
           <p>
-            With a solid background in Computer Engineering and an ongoing
-            Master’s degree, I specialize in aligning complex technical solutions
-            with strategic business goals.
+            At Dell, I spearhead the development of exceptional products for
+            diverse teams across the organization. Working with
+            cross-functional teams across multiple countries, I discover
+            optimal user solutions while creating remarkable experiences.
           </p>
 
           <p>
-            Throughout my career at global leaders like Oracle and Dell, I have
-            consistently driven product optimization and led cross-functional
-            teams to deliver high-impact results in dynamic environments.
+            My drive stems from a commitment to innovation, user-centric
+            design, and data-driven decision-making. I focus on accessibility
+            and solving real-world challenges through impactful products.
+            I excel at developing strategies, crafting compelling narratives,
+            and executing them effectively.
           </p>
 
           <p>
-            My core expertise spans the entire Product Lifecycle, from discovery
-            and roadmap definition to agile leadership (CSM, CSPO). I am highly
-            proficient in Data Analytics, leveraging tools like Amplitude and SQL
-            to achieve measurable outcomes, such as a 45% reduction in user
-            onboarding time. 🚀🎯
+            With over seven years of experience, I deeply understand users'
+            pain points and deliver solutions that consistently exceed
+            expectations.
           </p>
-        </div>
-
-        {/* Resume + Email */}
-        <div className="my-10">
-          <h2 className="mb-4 text-xl font-semibold tracking-tighter">
-            resume & contact
-          </h2>
-
-          <ul className="space-y-3">
-            <li>
-              <a
-                href="/paulomachado-resume.pdf"
-                download
-                className="underline hover:text-neutral-900 dark:hover:text-neutral-100"
-              >
-                download my resume
-              </a>
-            </li>
-
-            <li>
-              <a
-                href="mailto:paulomachadof3@gmail.com"
-                className="underline hover:text-neutral-900 dark:hover:text-neutral-100"
-              >
-                paulomachadof3@gmail.com
-              </a>
-            </li>
-          </ul>
         </div>
       </div>
     </section>
