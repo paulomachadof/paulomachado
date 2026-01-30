@@ -3,7 +3,7 @@ export default function Page() {
     <section className="flex justify-center px-6">
       <div className="w-full max-w-4xl">
         <h1 className="mb-8 text-3xl font-semibold tracking-tighter">
-          Why I’m a Product Manager
+          Hi, I’m Paulo!
         </h1>
 
         <div className="space-y-6 text-base leading-relaxed text-neutral-700 dark:text-neutral-300">
