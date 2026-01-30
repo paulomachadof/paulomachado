@@ -3,22 +3,20 @@ export default function Page() {
     <section className="flex justify-center px-6">
       <div className="w-full max-w-4xl">
         <h1 className="mb-8 text-3xl font-semibold tracking-tighter">
-          Why I’m a Product Manager?
+          Hi, I'm Paulo!
         </h1>
 
         <div className="space-y-6 text-base leading-relaxed text-neutral-700 dark:text-neutral-300">
           <p>
             I am passionate about creating innovative solutions that improve
             people's lives, streamline processes, and enhance daily tasks.
-            Since 2017, I have focused on digital product development,
+            Since 2017, I have focused on agile digital product development,
             constantly seeking new insights and knowledge.
           </p>
 
           <p>
-            At Dell, I spearhead the development of exceptional products for
-            diverse teams across the organization. Working with
-            cross-functional teams across multiple countries, I discover
-            optimal user solutions while creating remarkable experiences.
+            I specialize in aligning complex technical solutions with strategic business goals. Throughout my career at global leaders like Oracle and Dell, 
+            I have consistently driven product optimization and led cross-functional teams to deliver high-impact results in dynamic environments
           </p>
 
           <p>
