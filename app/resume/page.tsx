@@ -14,7 +14,7 @@ export default function ResumePage() {
       {/* Download resume */}
       <div className="mb-12">
         <a
-          href="/paulo-machado-resume.pdf"
+          href="public/paulomachado-resume.pdf"
           download
           className="inline-block rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
         >
