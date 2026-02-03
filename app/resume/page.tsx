@@ -232,7 +232,7 @@ export default function ResumePage() {
       </div>
 
       {/* ✅ Button after summary (Option 2) */}
-      <div className="mb-12">
+      <div className="mb-6">
         <a
           href="/paulomachado-resume.pdf"
           download
