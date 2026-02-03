@@ -221,12 +221,34 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 export default function ResumePage() {
   return (
     <section>
-      <h1 className="mb-8 text-2xl font-semibold tracking-tighter">resume</h1>
+      <h1 className="mb-4 text-2xl font-semibold tracking-tighter">resume</h1>
+
+      {/* Download resume + contact */}
+      <div className="mb-10 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+        <a
+          href="/paulo-machado-resume.pdf"
+          download
+          className="rounded-md border border-neutral-300 px-3 py-1 font-medium hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
+        >
+          Download resume (PDF)
+        </a>
+
+        <span className="text-neutral-300 dark:text-neutral-700">•</span>
+
+        <a
+          href="mailto:paulomachadof3@gmail.com"
+          className="underline underline-offset-4 text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
+        >
+          paulomachadof3@gmail.com
+        </a>
+      </div>
 
       {/* Professional Summary */}
       <div className="mb-10">
         <SectionTitle>Professional summary</SectionTitle>
-        <p className="text-neutral-800 dark:text-neutral-200 leading-relaxed">{professionalSummary.text}</p>
+        <p className="leading-relaxed text-neutral-800 dark:text-neutral-200">
+          {professionalSummary.text}
+        </p>
       </div>
 
       {/* Experience */}
@@ -304,7 +326,7 @@ export default function ResumePage() {
           {achievements.map((a) => (
             <li key={a.title}>
               <p className="text-base font-medium text-neutral-900 dark:text-neutral-100">{a.title}</p>
-              <p className="text-neutral-800 dark:text-neutral-200 leading-relaxed">{a.description}</p>
+              <p className="leading-relaxed text-neutral-800 dark:text-neutral-200">{a.description}</p>
             </li>
           ))}
         </ul>
@@ -313,7 +335,6 @@ export default function ResumePage() {
       {/* Career Preferences */}
       <div>
         <SectionTitle>Career preferences</SectionTitle>
-
         <div className="space-y-4 text-neutral-800 dark:text-neutral-200">
           <div>
             <p className="text-base font-medium text-neutral-900 dark:text-neutral-100">Compensation</p>
@@ -321,22 +342,30 @@ export default function ResumePage() {
           </div>
 
           <div>
-            <p className="text-base font-medium text-neutral-900 dark:text-neutral-100">Location & work arrangement</p>
+            <p className="text-base font-medium text-neutral-900 dark:text-neutral-100">
+              Location & work arrangement
+            </p>
             <p className="leading-relaxed">{careerPreferences.location}</p>
           </div>
 
           <div>
-            <p className="text-base font-medium text-neutral-900 dark:text-neutral-100">Company & culture</p>
+            <p className="text-base font-medium text-neutral-900 dark:text-neutral-100">
+              Company & culture
+            </p>
             <p className="leading-relaxed">{careerPreferences.companyCulture}</p>
           </div>
 
           <div>
-            <p className="text-base font-medium text-neutral-900 dark:text-neutral-100">Long-term goals</p>
+            <p className="text-base font-medium text-neutral-900 dark:text-neutral-100">
+              Long-term goals
+            </p>
             <p className="leading-relaxed">{careerPreferences.longTermGoals}</p>
           </div>
 
           <div>
-            <p className="text-base font-medium text-neutral-900 dark:text-neutral-100">Deal breakers</p>
+            <p className="text-base font-medium text-neutral-900 dark:text-neutral-100">
+              Deal breakers
+            </p>
             <ul className="mt-2 list-disc space-y-2 pl-5">
               {careerPreferences.dealBreakers.map((d) => (
                 <li key={d} className="leading-relaxed">
