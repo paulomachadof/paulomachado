@@ -230,7 +230,7 @@ export default function ResumePage() {
           download
           className="rounded-md border border-neutral-300 px-3 py-1 font-medium hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
         >
-          Download resume (PDF)
+          download resume
         </a>
 
         <span className="text-neutral-300 dark:text-neutral-700">•</span>
