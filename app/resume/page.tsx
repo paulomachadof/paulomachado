@@ -234,14 +234,13 @@ export default function ResumePage() {
       {/* ✅ Button after summary (Option 2) */}
       <div className="mb-12">
         <a
-          href="/paulo-machado-resume.pdf"
+          href="/paulomachado-resume.pdf"
           download
           className="inline-block rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
         >
-          Download resume (PDF)
+          download resume
         </a>
       </div>
-
       {/* Experience */}
       <div className="mb-10">
         <SectionTitle>Professional experience</SectionTitle>
