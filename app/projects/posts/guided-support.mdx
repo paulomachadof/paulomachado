@@ -1,6 +1,6 @@
 ---
 title: 'Global Support Optimization: 36% Reduction in Chatbot Drop-off Rate Through AI Models'
-publishedAt: "2026-01-22"
+publishedAt: '2026-01-22'
 summary: 'How AI models design intelligent support flows, track follow-up metrics, and continuously improve outcomes.'
 ---
 
@@ -14,63 +14,107 @@ My approach focused on a deep analysis of the chat flow creation and validation 
 | :--- | ---: | :---: | --- |
 | Drop-off Rate (Pre-Resolution) | 84% | ~54% | 36% Reduction |
 | Human Agent Overload | High | Moderate | Time Optimization |
-| Flow Validation | Intuitive/Manual | AI and Data-Driven | Higher Accuracy |
+| Flow Validation | Intuitive / Manual | AI and Data-Driven | Higher Accuracy |
+
+---
 
 ## The Challenge
 
 The chatbot support service, although designed to scale customer service, was acting as a bottleneck. The high drop-off rate (84%) indicated that users were frustrated with the bot's inability to resolve their issues, forcing them to seek a human agent.
 
-The problem was not solely with the chatbot technology, but fundamentally with the **product management process**. The support and content team dedicated considerable effort to creating and expanding new chat flows, but the definition of which flows to prioritize was based on intuition or immediate demand, rather than a rigorous analysis of historical failure data or user behavior. Furthermore, the validation of these new flows occurred directly in production, without a robust **A/B testing** mechanism, exposing users to suboptimal experiences.
+The problem was not solely with the chatbot technology, but fundamentally with the **product management process**. The support and content team dedicated considerable effort to creating and expanding new chat flows, but prioritization was driven by intuition rather than historical failure data or user behavior. Additionally, new flows were validated directly in production, without a robust **A/B testing** mechanism, exposing users to suboptimal experiences.
+
+---
 
 ## Discovery & Research Process
 
-To diagnose the root cause of the problem, I initiated a structured discovery process, mapping all phases, interactions, *stakeholders*, and actors involved in the chat journey and content management.
+To diagnose the root cause, I initiated a structured discovery process, mapping all phases, interactions, *stakeholders*, and actors involved in the chat journey and content management.
 
-> "The inefficiency was masked by a high volume of work. The team was busy creating, but they were not creating what truly mattered to the user."
+> “The inefficiency was masked by a high volume of work. The team was busy creating, but they were not creating what truly mattered to the user.”
 
-The discovery workflow revealed critical flaws in the product lifecycle:
-
-![Discovery Workflow Diagram](/guided-support/product-discovery.png)
+<figure className="my-10">
+  <img
+    src="/guided-support/product-discovery.png"
+    alt="Product discovery workflow diagram"
+    className="rounded-lg"
+  />
+  <figcaption className="mt-2 text-sm italic text-neutral-500">
+    Figure 1 — Product discovery workflow exposing gaps in demand validation and safe testing environments.
+  </figcaption>
+</figure>
 
 **Key Pain Points Identified:**
-1.  **Lack of Demand Validation:** The prioritization of new flows was not validated by historical drop-off or conversion data.
-2.  **In-Production Validation:** The absence of an adequate *testing* environment led to flow validation directly in the customer environment, negatively impacting the experience.
-3.  **User Disconnect:** There was no mechanism to identify the user's profile (e.g., technical, non-technical) and adapt the language or support flow accordingly.
+1. **Lack of Demand Validation:** New flows were not prioritized using historical drop-off or conversion data.
+2. **In-Production Validation:** Absence of a safe testing environment forced validation directly in customer-facing flows.
+3. **User Disconnect:** No mechanism existed to identify user profiles and adapt language or support depth accordingly.
+
+---
 
 ## The Solution
 
-The proposed solution was the introduction of two **Artificial Intelligence Models** and the creation of a **Management Interface** to empower the support team and ensure the human feedback loop in AI training.
+The solution introduced two **Artificial Intelligence Models** and a **Management Interface** to ensure continuous learning through a human feedback loop.
 
 ### 1. Flow Review and Optimization Model (Flow Optimization AI)
-This model was trained on chat history, focusing on:
-*   **Gap Identification:** Analyzing where users most frequently dropped off and cross-referencing this with the absence of support flows for those topics.
-*   **Improvement Suggestions:** Proposing adjustments to existing flows or the creation of new ones, based on the probability of success (conversion) and the reduction of *handoff* to human agents.
+
+This model was trained on historical chat data, focusing on:
+- **Gap Identification:** Detecting where users dropped off and correlating failures with missing or weak support flows.
+- **Improvement Suggestions:** Recommending new or improved flows based on predicted conversion probability and reduction of human handoffs.
 
 ### 2. User Profiling Model (User Profiling AI)
-This model analyzes the user's first message to determine their profile (e.g., *techno-knowledgeable*, *non-technical*, *frustrated*).
-*   **Dynamic Redirection:** The chatbot immediately adapts the language, the depth of questions, and the support flow, increasing relevance and the chance of resolution.
 
-The mind map below summarizes the problems and the implemented solutions:
+This model analyzes the user’s first interaction to infer their profile (*technical*, *non-technical*, *frustrated*).
+- **Dynamic Redirection:** The chatbot adapts language, question depth, and flow complexity in real time to maximize resolution.
 
-![Mind Map of Problems and Solutions](/guided-support/mind-map.png)
+<figure className="my-10">
+  <img
+    src="/guided-support/mind-map.png"
+    alt="Mind map of chatbot problems and solutions"
+    className="rounded-lg"
+  />
+  <figcaption className="mt-2 text-sm italic text-neutral-500">
+    Figure 2 — Mind map connecting identified chatbot failures to AI-driven optimization strategies.
+  </figcaption>
+</figure>
+
+---
 
 ## Implementation and Iteration
 
-To ensure the adoption and continuous training of the AI models, we developed a dedicated **Web Interface** for human supervisors. This interface was not just a metrics dashboard, but a **Human-in-the-Loop (HITL)** tool.
+To ensure adoption and continuous training of the AI models, we built a dedicated **Human-in-the-Loop (HITL) Web Interface** for supervisors.
 
-![Wireframe of the Supervisor Interface](/guided-support/flow.png)
+<figure className="my-10">
+  <img
+    src="/guided-support/flow.png"
+    alt="Supervisor interface wireframe"
+    className="rounded-lg"
+  />
+  <figcaption className="mt-2 text-sm italic text-neutral-500">
+    Figure 3 — Low-fidelity wireframe of the Human-in-the-Loop supervision interface.
+  </figcaption>
+</figure>
 
 **Key Interface Features:**
-*   **Metrics Monitoring:** Real-time tracking of completion rate, average chat time, and satisfaction.
-*   **Profile Creation:** Ability to create new user profiles (e.g., "Corporate User", "Small Business Owner") and associate them with specific flows.
-*   **Manual Training:** Supervisors could review chats where the AI failed in profiling or flow suggestion and manually correct them, feeding the model with high-quality data.
+- **Metrics Monitoring:** Real-time tracking of completion rate, average chat time, and satisfaction.
+- **Profile Creation:** Creation of reusable user profiles linked to specific support flows.
+- **Manual Training:** Supervisors correct AI misclassifications, feeding the model with high-quality labeled data.
 
-![Interface Low Fidelity Prototype](/guided-support/supervisor_dashboard_detailed.png)
+<figure className="my-10">
+  <img
+    src="/guided-support/supervisor_dashboard_detailed.png"
+    alt="Supervisor dashboard detailed view"
+    className="rounded-lg"
+  />
+  <figcaption className="mt-2 text-sm italic text-neutral-500">
+    Figure 4 — Supervisor dashboard enabling manual AI training and real-time performance monitoring.
+  </figcaption>
+</figure>
+
+---
 
 ## Results and Next Steps
 
-Initial tests, focused on the highest-volume and highest-drop-off flows, resulted in a **36% improvement in the chatbot completion rate**. This not only freed up human agent capacity for more complex issues but also significantly improved the customer experience.
+Initial tests, focused on the highest-volume and highest-drop-off flows, resulted in a **36% improvement in chatbot completion rate**. This reduced human agent overload and significantly improved customer experience.
 
-The next step in the *roadmap* is **integration with the company's CRM tool**. This will allow the import of valuable data such as support history, user device information, and demographic data. Enriching the *dataset* with this external information will enable more sophisticated training of the AI models, refining user profiling and the accuracy of flow suggestions, aiming for the goal of **reducing the drop-off rate to under 10%**.
+The next roadmap milestone is **CRM integration**, enabling ingestion of support history, device data, and user context. This enriched dataset will allow more precise user profiling and flow recommendations, with the long-term goal of **reducing drop-off rates below 10%**.
 
-This project exemplifies the application of **Senior Product Management** to solve complex business problems, utilizing process analysis, cutting-edge technology (AI), and a product design centered on the human feedback loop.
+This project demonstrates **Senior Product Management** applied to complex systems: combining discovery rigor, AI-driven solutions, and human-centered design to generate measurable business impact.
