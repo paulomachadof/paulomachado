@@ -1,0 +1,187 @@
+---
+title: 'Building my personal AI server with Hermes'
+publishedAt: '2026-06-17'
+summary: 'How I built a self-hosted AI workspace with specialized agents, Telegram workflows, local intelligence, and a Mission Control dashboard.'
+author: 'Paulo Machado'
+---
+
+## Why I built it
+
+Over the last few months, I have been building a personal AI server around [Hermes Agent](https://github.com/NousResearch/hermes-agent), an open-source framework for running AI agents with tools, memory, profiles, scheduled jobs, and integrations across different platforms.
+
+The original idea was simple: I did not want another chatbot tab.
+
+I wanted an AI workspace that could help me manage real context across work, research, career, finances, projects, and daily routines. Something closer to a personal operating layer than a generic assistant.
+
+That became a home lab project: a self-hosted Hermes environment running on my own server, with a custom interface I call Mission Control.
+
+## The product problem
+
+The problem I wanted to solve was not "how can I use AI more?" It was more practical than that.
+
+My context was spread everywhere:
+
+- conversations in Telegram;
+- notes and documents in different places;
+- ideas captured during the day and forgotten later;
+- recurring tasks that needed follow-up;
+- career monitoring, research, finance, and personal projects competing for attention;
+- decisions made in one context but needed later in another.
+
+Using more tools would not solve that by itself. I needed a system that could connect information, remember useful context, trigger routines, and stay quiet when there was nothing important to say.
+
+That last part matters. A useful AI system should not be noisy. It should know when to act, when to ask, and when to disappear into the background.
+
+## The architecture
+
+At the center of the system is Hermes Agent. I use Hermes because it supports the pieces I wanted to experiment with: persistent memory, skills, tools, profiles, scheduled jobs, Telegram integration, and provider-agnostic LLM workflows.
+
+On top of that, I built a Mission Control layer to make the system easier to operate.
+
+The architecture has a few main parts:
+
+- Hermes profiles for specialized agents;
+- Telegram as the day-to-day conversation interface;
+- scheduled jobs for recurring routines;
+- a local intelligence pipeline for documents, memories, and operational context;
+- SQLite for persistence and history;
+- local models through Ollama for embeddings, classification, and summarization experiments;
+- a Mission Control dashboard to monitor agents, projects, tasks, routines, and system status.
+
+The goal was not to create a perfect enterprise platform. The goal was to build something real enough to expose the hard problems: routing, context, memory, reliability, permissions, noise, and handoff between humans and agents.
+
+## Specialized agents instead of one generic assistant
+
+One of the early product decisions was to avoid a single generic assistant for everything.
+
+Instead, I created specialized Hermes profiles with clearer responsibilities. For example:
+
+- an orchestration agent for priorities, daily briefings, and routing;
+- a productivity agent for projects, meetings, sprint follow-ups, and documentation;
+- a research agent for deeper analysis;
+- a finance agent for financial routines;
+- a career agent for market monitoring, job opportunities, resumes, and interviews.
+
+Each agent has its own context, memory, skills, and preferred delivery channels. This separation makes the system easier to reason about. A career-related task should not be handled like a finance routine. A project follow-up should not be mixed with a market-monitoring alert.
+
+That seems obvious after the fact, but it is one of the most important product lessons from the project: agent design is not only about prompts. It is about boundaries.
+
+## Telegram as the interface
+
+I use Telegram as the main interface because it fits how I already work.
+
+Instead of opening a dashboard every time I need something, I can interact with different agents through messages. Some topics are routed to specific agents. Some scheduled outputs are delivered into specific threads. Some routines run quietly and only report back when there is something useful.
+
+This made the system feel less like a separate tool and more like an operational layer around my existing workflow.
+
+A dashboard is useful for visibility. A chat interface is useful for action.
+
+I wanted both.
+
+## Mission Control
+
+Mission Control is the visual layer I built around the Hermes environment.
+
+It is not meant to replace the chat interface. It gives me a broader view of what is happening: which agents exist, what they are responsible for, what routines are configured, what projects are being tracked, and what the system knows about recent activity.
+
+In practical terms, it helps answer questions like:
+
+- Which agents are active or idle?
+- What recurring routines are running?
+- What projects or tasks are being monitored?
+- What documents or briefings were generated?
+- What does the system need from me?
+
+This changed how I thought about AI agents. Once agents can take actions, remember context, and run on a schedule, observability becomes part of the product. You need to know what the system is doing and why.
+
+## Local intelligence pipeline
+
+Another part of the project is a local intelligence pipeline.
+
+The pipeline ingests selected sources, normalizes them, stores useful content, and generates structured outputs such as decisions, tasks, risks, people, projects, and briefings.
+
+The basic flow is:
+
+1. Information enters from notes, documents, memory files, logs, or controlled inbox folders.
+2. The system normalizes and stores the content.
+3. Local models help classify, summarize, or extract structured information.
+4. The output becomes searchable and reusable by the broader Hermes environment.
+5. Briefings or alerts are generated when useful.
+
+I have also experimented with embeddings and semantic search so the system can retrieve context more intelligently than a simple keyword search.
+
+This is where the project became especially interesting from a product management perspective. The hard part is not summarizing a document. The hard part is deciding which information deserves to become persistent context and which should be ignored.
+
+Memory is only valuable if it improves future decisions.
+
+## What is functional today
+
+This is not just a concept document. The system runs on my own server and supports real workflows.
+
+Today, it can support:
+
+- AI-assisted conversations through Telegram;
+- specialized agents with separate responsibilities;
+- scheduled routines and recurring briefings;
+- career and market monitoring workflows;
+- project and productivity follow-ups;
+- local document and note processing;
+- persistent memory across sessions;
+- a Mission Control dashboard for visibility;
+- experiments with local models and semantic memory.
+
+Some parts are stable. Some parts are still experimental. That is intentional. I use this project as a practical lab for understanding where AI agents are useful, where they fail, and what kind of product structure makes them safer and more helpful.
+
+## What I learned as a Product Manager
+
+The biggest lesson is that AI-assisted work is not just about generating text or code faster.
+
+The real value appears when AI becomes part of a workflow:
+
+- capturing context;
+- clarifying ambiguous requests;
+- turning ideas into requirements;
+- identifying edge cases;
+- preparing acceptance criteria;
+- monitoring recurring signals;
+- summarizing what changed;
+- helping decide what should happen next.
+
+Building this system also made the product trade-offs very visible.
+
+Too much automation creates noise. Too much memory creates clutter. Too many agents create confusion. Too little structure turns everything back into a chatbot.
+
+The product challenge is to design the right boundaries: what the agent should know, what it can do, where it should act, and when it should ask for confirmation.
+
+That is a much more interesting problem than prompt writing.
+
+## Why this matters
+
+I see personal AI infrastructure as a useful way to explore the future of product and engineering work.
+
+Not because everyone needs a server at home. Most people do not.
+
+But because building one forces you to face the practical questions behind AI systems:
+
+- How should context be stored?
+- How should agents be separated?
+- How should actions be reviewed?
+- How should recurring routines be scheduled?
+- How should the system explain itself?
+- How do you avoid turning automation into noise?
+
+Those questions are very close to the questions teams face when adding AI into real products.
+
+A demo can hide the messy parts. A running system cannot.
+
+That is why this project has been valuable to me. It gives me a real environment to test ideas, break assumptions, refine workflows, and think more clearly about AI-enabled products.
+
+## Final thought
+
+The most interesting part of this project is not that it uses AI.
+
+The interesting part is that it behaves like a product: it has users, workflows, constraints, failure modes, feedback loops, and roadmap decisions.
+
+It is small enough for me to change quickly, but real enough to teach me something every time it breaks.
+
+That is the kind of AI experimentation I find useful: not a polished demo, but a working system that keeps forcing better product decisions.
